@@ -1,0 +1,83 @@
+/* Map Styles */
+			svg {
+				background: #fff;
+			}
+
+			#ireland path{
+				stroke: #fff;
+				stroke-width: .5px;
+			}
+
+			#ireland .active {
+				fill: #FFDE0A;	
+			}
+
+			#ireland .clicked {
+				fill: #000;	
+			}
+
+			/* Bar Chart Styles */
+			.bar {
+			  fill: #ff6c00;
+			}
+			
+			.bar text {
+			  fill: #555;
+			}
+
+			.bar .negative {
+				fill: #f45;
+			}			
+
+			.bar .active {
+				fill: #FFDE0A;
+				font-weight: bold;
+				color: black;
+			}
+
+			.bar .active text {
+			  fill: black; 
+			  font-weight: bold;
+			}
+
+			.bar .clicked {
+				fill: #000;
+			}
+
+			.axis path, .axis line {
+			  fill: none;
+			  stroke: black;
+			  shape-rendering: crispEdges;
+			}
+
+			.clear {
+			  opacity: 0;
+			}
+
+			/* Legend styles */
+			.legend-container {
+				stroke-width: 0.5px;
+				fill: #ffffff;
+				fill-opacity: 1.0;
+				/*stroke: #898989;*/				
+			}
+
+			.legend-label {
+				fill: #898989;
+				font-weight: bold;
+			}
+
+			/* Highlight figures */
+			table .highlight { 
+				background-color: #ff6c00;
+				color: #fff;
+			}
+			tr .bold {
+				background-color: black;
+				font-weight: bold;
+			}
+
+			table .rowHeader {
+				background-color: #f0f0f0;
+				font-weight: bold;
+			}

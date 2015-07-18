@@ -1,0 +1,35 @@
+/* override bootstrap styles */
+        	.col-lg-4, .col-sm-4, .col-sm-3, .col-sm-5 {
+				padding-left: 0;
+				padding-right: 0;
+			}
+
+			.panel {
+				margin-bottom: 5px;
+			}
+
+			.panel-heading {
+				font-weight: bold;
+			}
+
+			h1,h2,h3 {
+				margin-top: 5px;
+				margin-bottom: 5px;
+			}
+
+			.btn-primary {
+				background-color: #ff6c00;
+				background-image: linear-gradient(rgb(255, 106, 0) 0px, rgb(255, 150, 50) 100%);
+				border-color : #f05c00;
+			}
+
+			.btn-primary:hover {
+				border-color : #ffffff;
+			}
+
+
+			.btn-primary.active {
+				background-color: #dd5500;
+				background-image: none;
+				border-color : #f05c00;
+			}

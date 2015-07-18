@@ -1,0 +1,31 @@
+﻿.purple-header {
+    background-image:url("../../imgs/index/bg_header.jpg");
+    background-attachment:scroll;
+    background-clip:border-box;
+    background-color:rgba(0,0,0,0);
+    background-origin:padding-box;
+    background-size:auto;
+    color:rgb(200,200,230);
+    display:block;
+    text-align:left;
+    padding-bottom:10px;
+    padding-top:10px;
+    padding-left:15px;
+    padding-right:15px;
+
+}
+
+.purple-container {
+    margin-left:343px;
+    margin-right:343px;
+    padding-left:15px;
+    padding-right:15px;
+}
+
+.purple-header h1 {
+    font-family:Lustria, Georgia, 'Times New Roman', Times, serif;
+    font-size:60px;
+    font-weight:500;
+    text-align:left;
+    color: rgb(255,255,255);
+}

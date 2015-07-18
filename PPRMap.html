@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>PPR Map</title>
+    <link href="./css/libs/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./css/libs/leaflet.css" rel="stylesheet" type="text/css">
+    <link href="./css/PPRmap/map.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <!-- Container for the maps and dashboard -->
+    <div class="row-fluid col-sm-12" style="padding:0">
+      <div class="row-fluid col-sm-6" style="padding:0">
+        <!-- The Leaflet map hooks into this div -->
+        <div class="col-sm-12" id="map" style="width:650px;height:890.5px"></div>
+        <!-- Map curtain essentially "hides" the Leaflet map from view. Zooming into a certain level turns off its css properties
+            and renders it transparent -->
+        <div class="col-sm-12" id="mapCurtain" style="width:650px;height:890.5px"></div>
+        <!-- The d3 map hooks into this div. -->
+        <div class="col-sm-12" id="regionalMap" style="width:650px;height:890.5px"></div>
+      </div>
+      <div class="row-fluid col-sm-6" style="padding:0">
+          <!-- The map's reset and back buttons -->
+        <button id="mapReset" class="btn btn-default">Reset map</button>
+        <button id="mapBack" class="btn btn-default">Back</button>
+          <!-- The dashboard. When the page loads the javascript dynamically generates a table within the rptArrears div. -->
+		<div id="rpt1" class="inActiveTab">
+			<div class="rptBody indent" id="rptArrears"></div>
+		</div>
+      </div>
+    </div>
+
+    <!-- The html after this point defines the black info boxes
+        tip: Info box at County and Electoral Division level
+        ppr_tip: Info box at Small-area level -->
+    <div id="tip">
+      <p class="zip"></p>
+      <p class="hoods"></p>
+      <table>
+        <tbody>
+          <tr class="ineq">
+            <th>
+              <div class="title">Total</div>
+              <div class="descr">Total properties in area</div>
+            </th>
+            <td class="val"></td>
+          </tr>
+          <tr class="high">
+            <th>
+              <div class="title"><span class="circle high"></span>Unoccupied</div>
+              <div class="descr">Unoccupied properties</div>
+            </th>
+            <td class="val"></td>
+          </tr>
+          <tr class="mid">
+            <th>
+              <div class="title"><span class="circle mid"></span>Vacant</div>
+              <div class="descr">Vacant properties</div>
+            </th>
+            <td class="val"></td>
+          </tr>
+          <tr class="low">
+            <th>
+              <div class="title"><span class="circle low"></span>Vacancy rate</div>
+              <div class="descr">Vacancy rate in area</div>
+            </th>
+            <td class="val"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="tip_ppr">
+      <p class="addr"></p>
+      <p class="hoods"></p>
+      <table>
+        <tbody>
+          <tr class="date">
+            <th>
+              <div class="title">Sold</div>
+            </th>
+            <td class="val"></td>
+          </tr>
+          <tr class="price">
+            <th>
+              <div class="title"><span class="circle price"></span>Price</div>
+            </th>
+            <td class="val"></td>
+          </tr>
+          <tr class="fmp">
+            <th>
+              <div class="title"><span class="circle fmp"></span>Full Market Price</div>
+            </th>
+            <td class="val"></td>
+          </tr>
+          <tr class="vatex">
+            <th>
+              <div class="title"><span class="circle vatex"></span>Vat Exclusive</div>
+            </th>
+            <td class="val"></td>
+          </tr>
+          <tr class="type">
+            <th>
+              <div class="title"><span class="circle type"></span>Type</div>
+            </th>
+            <td class="val"></td>
+          </tr>
+          <tr class="proptype">
+            <th>
+              <div class="title"><span class="circle proptype"></span>Property type</div>
+            </th>
+            <td class="val"></td>
+          </tr>
+          <tr class="beds">
+            <th>
+              <div class="title"><span class="circle beds"></span>Bedrooms</div>
+            </th>
+            <td class="val"></td>
+          </tr>
+          <tr class="baths">
+            <th>
+              <div class="title"><span class="circle baths"></span>Bathrooms</div>
+            </th>
+            <td class="val"></td>
+          </tr>
+          <tr class="id">
+            <th>
+              <div class="title"><span class="circle id"></span>id</div>
+            </th>
+            <td class="val"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+<!-- Libraries -->
+<script src="javascript/libs/d3.v3.min.js"></script>
+<script src="javascript/libs/topojson.v1.min.js"></script>
+<script src="javascript/libs/d3.hexbin.v0.min.js"></script>
+<script src="javascript/libs/jquery-2.1.4.min.js"></script>
+<script src="javascript/libs/jquery.uriAnchor.js"></script>
+<script src="javascript/libs/leaflet.js"></script>
+
+<!-- Filtering and state tracking utilities -->
+<script src="javascript/PPRMap/jdcUtils.js"></script>
+<script src="javascript/PPRMap/jdcState.js"></script>
+<script src="javascript/PPRMap/jdcGrid.js"></script>
+<script src="javascript/PPRMap/dProvider.js"></script>
+<script src="javascript/PPRMap/dFilterBase.js"></script>
+
+<!-- Geomteric Information and Census Data -->
+<script src="javascript/PPRMap/maps_Admin_Cty.js"></script>
+<script src="javascript/PPRMap/maps_ED.js"></script>
+<script src="javascript/PPRMap/maps_SA.js"></script>
+<script src="javascript/PPRMap/census_Data_Cty_ED_SA.js"></script>
+
+<!-- Creation of map and data attachment above the "Small-area" level -->
+<script src="javascript/PPRMap/mouse_event.js"></script>
+<script src="javascript/PPRMap/basicMapSetup.js"></script>
+<script src="javascript/PPRMap/mapDraw.js"></script>
+<script src="javascript/PPRMap/projectionbounds.js"></script>
+
+<!-- Data for "Small-area" level -->
+<script src="data/dataPPRCSV_20150624.js"></script>
+
+<!-- Process and render "Small-area" data and render dashboard --> 
+<script async src="javascript/PPRMap/propertyinfo.js"></script>
+<script async src="javascript/PPRMap/dashboard.js"></script>
+
+    </body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>RoI Residential Mortgage Portfolio</title>
+		<link rel="stylesheet" type="text/css" href="css/libs/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/libs/nv.d3.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/libs/bootstrap-select.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/libs/bootstrap_btn_custom.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/libs/banner.css" />
+		<link rel="stylesheet" type="text/css" href="css/reports/sparkbar.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/reports/jdcGrid.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/reports/ptsb.css" />
+		<link rel="stylesheet" type="text/css" href="css/reports/dropdown.css" />
+		<link rel="stylesheet" type="text/css" href="css/reports/portfolio.css" />
+	</head>
+	<body>
+
+    <!-- Banner -->
+    <div id="top-banner" class="purple-header">
+        <div class="purple-container" style:"margin:0">
+            <h1>Credit Portfolio Analytics</h1>
+        </div>
+    </div>
+
+    <!-- Initial loading page -->
+	<div id='spin1' class="splash fabricLarge" style="background-color:transparent">
+		<div style="margin-top:10%;color:#00005f">
+			<div style="display:block;margin-left:auto;margin-right:auto;margin-top:auto;margin-bottom:auto">
+				<div class="col-sm-4">
+					<div class="pull-right">
+						<div class="logo"></div>
+						<div class="inception" style="display:block;margin-top:40%;margin-left:25%"></div>
+					</div>
+				</div>
+				<div class="loadReport col-sm-8" style="height:100%;border-left: 1px solid">
+					<h1>Mortgage Characteristics</h1>
+					<div class="start_button_round" style="display:none"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <!-- Main report page -->
+	<div class="container page grid" style="height:100%;width:100%;background-color:transparent">
+
+        <!-- Top set of buttons -->
+		<div class="row-fluid col-sm-12 no-padding" style="padding-top:5px;padding-bottom:5px">
+			<div class="pull-right btn-group prt"></div>
+			<div class="row-fluid" style="display:table">
+				<div class="row-fluid no-padding report"></div>
+			</div>
+		</div>
+
+        <!-- Filter bars, initial div is a container -->
+		<div class="row-fluid col-sm-12" style="padding:0;height:1px">
+			<div class="row-fluid col-sm-5" style="padding:0;float:left">
+				<div class="row-fluid col-sm-12" style="padding:0">
+					<div class="btn btn-custom btn-sm pull-right expand">>></div>
+					<div class="btn btn-custom btn-sm pull-right expandV">More Filters</div>
+					<div class="btn btn-custom btn-sm reset">Reset</div>
+					<div class="btn-group uom"></div>
+					<div class="btn-group rptPeriod"></div>
+				</div>
+				<div class="row-fluid col-sm-12 slices" style="padding:0">
+					<div id="filterChart" style="padding:0">
+						<svg></svg>
+					</div>
+				</div>
+			</div>
+		</div>
+
+        <!-- Dashboard for data display -->
+		<div class="row-fluid col-sm-7" style="padding:0;float:right">
+			<div id="rptMove" class="col-sm-6 hidden"></div>
+			<div id="rpt" style="overflow:scroll">
+			<div id='spin2'>
+				<div id="rpt_" class="activeTab">
+					Your browser application has javascript disabled - This report requires javascript to be enabled
+				</div>
+
+                <!-- Each rpt corresponds to a report type, e.g. Group Overview, Forbearance. Their class is changed to Active type and display changed to
+                    block upon being selected by the dropdown. -->
+				<div id="rpt0" class="activeTab">
+					<div class="fullspan rptControls">
+							<div class="btn-group pull-right rptPage"></div>
+					</div>
+					<div class="row-fluid" style="padding:5px">
+						<div class="rptTitle indent">Group Profile</div>
+						<div class="full-width rptTitleBorder"></div>
+					</div>
+					<div class="rptBody indent" id="rptDivision"></div>
+					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+					<div class="rptFooter indent"></div>
+				</div>
+				<div id="rpt1" class="inActiveTab">
+					<div class="fullspan rptControls">
+							<div class="btn-group pull-right rptPage"></div>
+					</div>
+					<div class="row-fluid" style="padding:5px">
+						<div class="rptTitle indent">Arrears Profile</div>
+						<div class="full-width rptTitleBorder"></div>
+					</div>
+					<div class="rptBody indent" id="rptArrears"></div>
+					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+					<div class="rptFooter indent"></div>
+				</div>
+				<div id="rpt2" class="inActiveTab">
+					<div class="fullspan rptControls">
+							<div class="btn-group pull-right rptPage"></div>
+					</div>
+					<div class="row-fluid" style="padding:5px">
+						<div class="rptTitle indent">Forbearance</div>
+						<div class="full-width rptTitleBorder"></div>
+					</div>
+					<div class="rptBody indent" id="rptFB"></div>
+					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+					<div class="rptFooter indent"></div>
+				</div>
+				<div id="rpt3" class="inActiveTab">
+					<div class="fullspan rptControls">
+							<div class="btn-group pull-right rptPage"></div>
+					</div>
+					<div class="row-fluid" style="padding:5px">
+						<div class="rptTitle indent">Rate\Repayment Characteristics</div>
+						<div class="full-width rptTitleBorder"></div>
+					</div>
+					<div class="rptBody indent" id="rptRate"></div>
+					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+					<div class="rptFooter indent"></div>
+				</div>
+				<div id="rpt4" class="inActiveTab">
+					<div class="fullspan rptControls">
+							<div class="btn-group pull-right rptPage"></div>
+					</div>
+					<div class="row-fluid" style="padding:5px">
+						<div class="rptTitle indent">Loan Size Profile</div>
+						<div class="full-width rptTitleBorder"></div>
+					</div>
+					<div class="rptBody indent" id="rptLoanSize"></div>
+					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+					<div class="rptFooter indent"></div>
+				</div>
+				<div id="rpt5" class="inActiveTab">
+					<div class="fullspan rptControls">
+							<div class="btn-group pull-right rptPage"></div>
+					</div>
+					<div class="row-fluid" style="padding:5px">
+						<div class="rptTitle indent">Indexed Loan To Value Profile</div>
+						<div class="full-width rptTitleBorder"></div>
+					</div>
+					<div class="rptBody indent" id="rptLTV"></div>
+					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+					<div class="rptFooter indent"></div>
+				</div>
+				<div id="rpt6" class="inActiveTab">
+					<div class="fullspan rptControls">
+							<div class="btn-group pull-right rptPage"></div>
+					</div>
+					<div class="row-fluid" style="padding:5px">
+						<div class="rptTitle indent">Geographic Distribution</div>
+						<div class="full-width rptTitleBorder"></div>
+					</div>
+					<div class="rptBody indent" id="rptGeo"></div>
+					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+					<div class="rptFooter indent"></div>
+				</div>
+				<div id="rpt7" class="inActiveTab">
+					<div class="fullspan rptControls">
+							<div class="btn-group pull-right rptPage"></div>
+					</div>
+					<div class="row-fluid" style="padding:5px">
+						<div class="rptTitle indent">Counties</div>
+						<div class="full-width rptTitleBorder"></div>
+					</div>
+					<div class="rptBody indent" id="rptCounties"></div>
+					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+					<div class="rptFooter indent"></div>
+				</div>
+				<div id="rpt8" class="inActiveTab">
+					<div class="fullspan no-padding" style="padding:0">
+						<div class="fullspan" style="padding:0">
+							<div class="row-fluid" style="padding:0;display:block;margin-left:30px;margin-right:auto">
+								<div id="mekkoV" class="wrapper-dropdown-1" tabindex="1"></div>
+								<div id='mekkoH' class="wrapper-dropdown-1"></div>
+							</div>
+							<div id="mekkoChart" style="display:block;padding:0">
+								<svg></svg>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div id=output>
+			</div>
+
+		    </div>
+			<div class="logo" style="position:fixed;bottom:0;right:70px"></div>
+		</div>
+
+        <!-- Pop-up charts -->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		      	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+		      </div>
+		      <div class="modal-body" id="popupChartBS">
+		        <div class="row-fluid col-sm-10"><svg width="100%" height="445"></svg></div>
+		        <div class="row-fluid col-sm-1 no-padding fill-color btn-group-vertical full-width" id="popupSlice"></div>
+				<div class="row-fluid col-sm-1 no-padding fill-color btn-group-vertical full-width" id="popupSliceA"></div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+        </div>
+
+        <!-- Libraries -->
+		<script src="./javascript/libs/jquery-2.1.4.min.js"></script>
+		<script src="./javascript/libs/jquery.uriAnchor.js"></script>
+		<script src="./javascript/libs/bootstrap.min.js"></script>
+		<script src="./javascript/libs/bootstrap-select.js"></script>
+		<script src="./javascript/libs/canvg.js"></script>
+		<script src="./javascript/libs/rgbcolor.js"></script>
+		<script src="./javascript/libs/stackblur.js"></script>
+		<script src="./javascript/libs/d3.v3.min.js"></script>
+		<script src="./javascript/libs/colorbrewer.v1.min.js"></script>
+		<script src="./javascript/libs/nv.d3.min.js"></script>
+		<script src="./javascript/libs/spin.min.js"></script>
+		<script src="./javascript/libs/pako.min.js"></script>
+
+        <!-- Extensions of libraries -->
+		<script src="./javascript/reports/nv_d3_horiz_stacked_bar.js"></script>
+		<script src="./javascript/reports/nv_d3_mekko.js"></script>
+		<script src="./javascript/reports/dropdown.js"></script>
+
+        <!-- Filter, State tracker and utility functions -->
+		<script src="./javascript/reports/dUtils.js"></script>
+		<script src="./javascript/reports/dState.js"></script>
+		<script src="./javascript/reports/dFilter.js"></script>
+		<script src="./javascript/reports/dProvider.js"></script>
+		<script src="./javascript/reports/dGrid.js"></script>
+		<script src="./javascript/reports/dDataShape.js"></script>
+		<script src="./javascript/reports/dDimFilter.js"></script>
+		<script src="./javascript/reports/dDimMekko.js"></script>
+
+        <!-- Portfolio UI set up -->
+		<script src="./javascript/reports/spinner.js"></script>
+		<script src="./javascript/reports/mortgageGrids.js"></script>
+		<script src="./javascript/reports/mortgageConfig.js"></script>
+		<script src="./javascript/reports/mortgage.js"></script>
+
+        <!-- Contains metadata for JSON and makes AJAX request for JSON -->
+		<!--<script src="./javascript/reports/mortgageData.js"></script!-->
+		<script src="./data/mortgageData.js"></script>
+
+		<script>
+			eval(pako.inflate(window.atob(payLoadData), { to: 'string' }));
+			$(".start_button_round").css("display","block");
+			window.onload = setTimeout(loadReport,500);
+		</script>
+
+	</body>
+</html>

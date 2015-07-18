@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html data-ng-app="vde">
+  <head>
+    <title>Lyra</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/Lyra/lib/colorpicker.css" />
+    <link rel="stylesheet" type="text/css" href="css/Lyra/fonts.css" />
+    <link rel="stylesheet" type="text/css" href="css/Lyra/vde.css" />
+    <link rel="stylesheet" type="text/css" href="css/Lyra/lib/sweetalert.css" />
+    <link rel="stylesheet" type="text/css" href="css/Lyra/lib/bootstrap.min.css" />
+  </head>
+
+  <body data-ng-controller="VdeCtrl" data-ng-init="load()"  data-ng-click="clearBubbles();">
+
+    <ng-include src="'templates/LYRA/pipelines.html'"></ng-include>
+
+      <ng-include src="'templates/LYRA/layers.html'"></ng-include>
+
+      <ng-include src="'templates/LYRA/center.html'"></ng-include>
+
+      <ng-include src="'templates/LYRA/popovers/scale.html'"></ng-include>
+
+      <ng-include src="'templates/LYRA/popovers/aggregate.html'"></ng-include>
+
+      <ng-include src="'templates/LYRA/popovers/data.html'"></ng-include>
+
+      <ng-include src="'templates/LYRA/popovers/timeline.html'" data-ng-controller="TimelineCtrl"></ng-include>
+
+      <ng-include src="'templates/LYRA/popovers/export.html'" data-ng-controller="ExportCtrl"></ng-include>
+
+      <script src="javascript/Lyra/lib/sweetalert.min.js"></script>
+      <script src="javascript/Lyra/lib/jquery.min-1.9.0.js"></script>
+      <script src="javascript/Lyra/lib/jquery-migrate-1.2.1.js"></script>
+      <script src="javascript/Lyra/lib/jquery.event.drag-2.2.js"></script>
+      <script src="javascript/Lyra/lib/jquery.event.drop-2.2.js"></script>
+      <script src="javascript/Lyra/lib/jquery-ui.min-1.9.0.js"></script>
+      <script src="javascript/Lyra/lib/bootstrap.min.js"></script>
+      <script src="javascript/Lyra/lib/d3.v3.min.js"></script>
+      <script src="javascript/Lyra/lib/vega-1.4.1.js"></script>
+      <script src="javascript/Lyra/lib/angular-1.2.10.min.js"></script>
+      <script src="javascript/Lyra/lib/bootstrap-colorpicker-module.js"></script>
+      <script src="javascript/Lyra/lib/inflector.js"></script>
+      <script src="javascript/Lyra/lib/sortable.js"></script>
+      <script src="javascript/Lyra/lib/indexeddb.js"></script>
+
+      <script src="javascript/Lyra/vde.js"></script>
+      <script src="javascript/Lyra/vis.js"></script>
+      <script src="javascript/Lyra/app.js"></script>
+
+  </body>
+</html>

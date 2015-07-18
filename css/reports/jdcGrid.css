@@ -1,0 +1,128 @@
+.cell{
+    font-weight: italic;
+    font-size: 1.2em;
+    text-align : right;
+}
+
+.table tbody>tr>td {
+    padding: 2px;
+    margin: 0px;
+}
+
+.table-default {
+    margin: 0px;
+}
+
+.h4 {
+    font-weight: italic;
+    font-size: 1.1em;
+}
+
+.header {
+    font-weight: italic;
+    font-size: 1em;
+    text-align : center;
+}
+
+.fullspan div {
+    display:table-cell;
+}
+
+div .no-padding{
+    padding: 0
+}
+
+button .full-width{
+    width: 100%;
+    display: block;
+}
+
+div .fill-color{
+    overflow: hidden;
+    background-color: #eeeeee;
+}
+
+div {
+    background-color: inherit;
+}
+
+.activeTab {
+
+}
+.inActiveTab {
+    display:none;
+}
+
+tr .highlight{
+    background-color : #ff9900;
+}
+
+tr.activeRow{
+    background-color : #ff9900;
+}
+
+/* Pop up stacked bar */
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar {
+  fill: steelblue;
+}
+
+g .active {
+  fill: red;
+}
+
+.modal-dialog{
+  width:80%;
+}
+
+.modal-body{
+    height:450px;
+}
+
+/* Make background transparent */
+.modal, .modal.fade.in { background-color: rgba(0,0,0,0); }
+
+.hidden{
+    display:none;
+}
+
+.indent {
+    padding-left: 15px;
+}
+
+.rptTitle {
+      font-size: 2em;
+}
+
+.rptStrapline {
+      font-size: 1.5em;
+}
+
+.rptCommentary {
+      font-size: 1.5em;
+    display : none;
+}
+
+.rptOverview {
+    font-size : 1.5em;
+}
+
+.rptTitleBorder {
+    padding:0;
+    border-bottom-style:solid;
+    border-bottom-color:#555;
+    border-width:3px
+}
+
+.activePage {
+    display:table-cell;
+}
+.inactivePage {
+    display:none;
+}

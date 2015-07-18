@@ -1,0 +1,14 @@
+.splash {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    padding: 0px;
+    z-index:10;
+    min-width: 100%;
+    min-height: 100%;
+    display: table;
+}
+
+div.fabricLarge {
+    background-image:url(/imgs/index/background.png);
+}

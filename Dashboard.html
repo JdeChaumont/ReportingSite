@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <title>Dashboard</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="css/dashboard/basic.css" />
+		<link rel="stylesheet" type="text/css" href="css/dashboard/page.css" />
+	</head>
+	<body>
+
+	<div class="container page">
+
+		<div class="row-fluid col-sm-12" style="padding:0">
+			<div class="row-fluid col-sm-1 no-padding fill-color btn-group-vertical full-width report"></div>
+
+			<div class="row-fluid col-sm-10" style="padding:0">
+				<div id="rpt">
+					<div id="rpt_" class="activeTab">
+						
+					</div>
+					<div id="rpt0" class="inActiveTab">
+						<div class="row-fluid" style="padding:5px">
+							<div class="pull-right logo"></div>
+							<div class="rptTitle indent">RoI Residential Mortgages</div>
+							<div class="rptStrapline indent">Credit Overview November 2014</div>
+							<div class="full-width rptTitleBorder"></div>
+						</div>
+						<div class="rptOverview">
+							<ul>
+								<li>This is a prototype report for the presentation of portfolio credit risk performance characteristics</li>
+								<li>Reports are accessed by clicking on the buttons to the left</li>
+								<li>The reports may be filtered using the dimensions at the top of each report</li>
+								<li>Clicking on figures in the reports will display a trend graph</li>
+								<li>The trend graph may be sub-analysed using buttons on the right hand side of the pop up window</li>
+							</ul>
+						</div>
+					</div>
+					<div id="rpt1" class="inActiveTab">
+						<div class="fullspan fill-color rptControls">
+							<div class="row-fluid col-sm-5" style="padding:0"><div class="btn-group entity"></div></div>
+							<div class="row-fluid col-sm-3"><div class="btn-group uom"></div></div>
+							<div class="row-fluid col-sm-4" style="padding:0"><div class="pull-right btn-group portfolio"></div></div>
+						</div>
+						<div class="row-fluid" style="padding:5px">
+							<div class="pull-right logo"></div>
+							<div class="rptTitle indent">Arrears</div>
+							<div class="rptStrapline indent">Credit Overview November 2014</div>
+							<div class="full-width rptTitleBorder"></div>
+						</div>
+						<div class="rptBody indent" id="rptArrears"></div>
+						<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+						<div class="rptFooter indent"></div>
+					</div>
+					<div id="rpt2" class="inActiveTab">
+						<div class="fullspan fill-color rptControls">
+							<div class="row-fluid col-sm-5" style="padding:0"><div class="btn-group entity"></div></div>
+							<div class="row-fluid col-sm-3"><div class="btn-group uom"></div></div>
+							<div class="row-fluid col-sm-4" style="padding:0"><div class="pull-right btn-group portfolio"></div></div>
+						</div>
+						<div class="row-fluid" style="padding:5px">
+							<div class="pull-right logo"></div>
+							<div class="rptTitle indent">Flows</div>
+							<div class="rptStrapline indent">Credit Overview November 2014</div>
+							<div class="full-width rptTitleBorder"></div>
+						</div>
+						<div class="rptBody indent" id="rptFlows"></div>
+						<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+						<div class="rptFooter indent"></div>
+					</div>
+					<div id="rpt4" class="inActiveTab">
+						<div class="fullspan fill-color rptControls">
+							<div class="row-fluid col-sm-5" style="padding:0"><div class="btn-group entity"></div></div>
+							<div class="row-fluid col-sm-3"><div class="btn-group uom"></div></div>
+							<div class="row-fluid col-sm-4" style="padding:0"><div class="pull-right btn-group portfolio"></div></div>
+						</div>
+						<div class="row-fluid" style="padding:5px">
+							<div class="pull-right logo"></div>
+							<div class="rptTitle indent">Forbearance</div>
+							<div class="rptStrapline indent">Credit Overview November 2014</div>
+							<div class="full-width rptTitleBorder"></div>
+						</div>
+						<div class="rptBody indent" id="rptForbearance"></div>
+						<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+						<div class="rptFooter indent"></div>
+					</div>
+					<div id="rpt5" class="inActiveTab">
+						<div class="fullspan fill-color rptControls">
+							<div class="row-fluid col-sm-5" style="padding:0"><div class="btn-group entity"></div></div>
+							<div class="row-fluid col-sm-3"><div class="btn-group uom"></div></div>
+							<div class="row-fluid col-sm-4" style="padding:0"><div class="pull-right btn-group portfolio"></div></div>
+						</div>
+						<div class="row-fluid" style="padding:5px">
+							<div class="pull-right logo"></div>
+							<div class="rptTitle indent">Forbearance Type</div>
+							<div class="rptStrapline indent">Credit Overview November 2014</div>
+							<div class="full-width rptTitleBorder"></div>
+						</div>
+						<div class="rptBody indent" id="rptFBType"></div>
+						<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+						<div class="rptFooter indent"></div>
+					</div>
+
+					<div id="rpt6" class="inActiveTab">
+						<div class="fullspan fill-color rptControls">
+							<div class="row-fluid col-sm-5" style="padding:0"></div>
+							<div class="row-fluid col-sm-3"><div class="btn-group uom"></div></div>
+							<div class="row-fluid col-sm-4" style="padding:0"><div class="pull-right btn-group portfolio"></div></div>
+						</div>
+						<div class="row-fluid" style="padding:5px">
+							<div class="pull-right logo"></div>
+							<div class="rptTitle indent">SBU</div>
+							<div class="rptStrapline indent">Credit Overview November 2014</div>
+							<div class="full-width rptTitleBorder"></div>
+						</div>
+						<div class="rptBody indent" id="rptSBU"></div>
+						<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+						<div class="rptFooter indent"></div>
+					</div>
+					<div id="rpt7" class="inActiveTab">
+						<div class="fullspan fill-color rptControls">
+							<div class="row-fluid col-sm-5" style="padding:0"><div class="btn-group entity"></div></div>
+							<div class="row-fluid col-sm-3"><div class="btn-group uom"></div></div>
+							<div class="row-fluid col-sm-4" style="padding:0"></div>
+						</div>
+						<div class="row-fluid" style="padding:5px">
+							<div class="pull-right logo"></div>
+							<div class="rptTitle indent">Portfolio</div>
+							<div class="rptStrapline indent">Credit Overview November 2014</div>
+							<div class="full-width rptTitleBorder"></div>
+						</div>
+						<div class="rptBody indent" id="rptPortfolio"></div>
+						<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+						<div class="rptFooter indent"></div>
+					</div>
+					<div id="rpt3" class="inActiveTab">
+						<div class="fullspan fill-color rptControls">
+							<div class="row-fluid col-sm-5" style="padding:0"><div class="btn-group entity"></div></div>
+							<div class="row-fluid col-sm-3"><div class="btn-group uom"></div></div>
+							<div class="row-fluid col-sm-4" style="padding:0"><div class="pull-right btn-group portfolio"></div></div>
+						</div>
+						<div class="row-fluid" style="padding:5px">
+							<div class="pull-right logo"></div>
+							<div class="rptTitle indent">NPL Flows</div>
+							<div class="rptStrapline indent">Credit Overview November 2014</div>
+							<div class="full-width rptTitleBorder"></div>
+						</div>
+						<div class="rptBody indent" id="rptCures"></div>
+						<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+						<div class="rptFooter indent"></div>
+					</div>
+					<div id="rpt8" class="inActiveTab">
+						<div class="fullspan fill-color rptControls">
+							<div class="row-fluid col-sm-5" style="padding:0"><div class="btn-group entity"></div></div>
+							<div class="row-fluid col-sm-3"><div class="btn-group uom"></div></div>
+							<div class="row-fluid col-sm-4" style="padding:0"><div class="pull-right btn-group portfolio"></div></div>
+						</div>
+						<div class="row-fluid" style="padding:5px">
+							<div class="pull-right logo"></div>
+							<div class="rptTitle indent">Provision Type Analysis</div>
+							<div class="rptStrapline indent">Credit Overview November 2014</div>
+							<div class="full-width rptTitleBorder"></div>
+						</div>
+						<div class="rptBody indent" id="rptProvType"></div>
+						<div class="rptCommentary indent">Additional commentary is placed at this point</div>
+						<div class="rptFooter indent"></div>
+					</div>
+					<div id="rpt9" class="inActiveTab">
+						<div class="fullspan fill-color rptControls">
+							<div class="row-fluid col-sm-5" style="padding:0"><div class="btn-group entity"></div></div>
+							<div class="row-fluid col-sm-3"><div class="btn-group uom"></div></div>
+							<div class="row-fluid col-sm-4" style="padding:0"><div class="pull-right btn-group portfolio"></div></div>
+						</div>
+						<div class="row-fluid" style="padding:5px">
+							<div class="pull-right logo"></div>
+							<div class="rptTitle indent">Portfolio View</div>
+							<div class="rptStrapline indent">Credit Overview November 2014</div>
+							<div class="full-width rptTitleBorder"></div>
+						</div>
+						<div class="row-fluid" style="padding:5px">
+							<div class="rptBody indent" id="rptBalBoxTop"></div>
+						</div>
+						<div class="row-fluid" style="padding:5px">
+							<div class="rptBody indent" id="rptBalBox"></div>
+						</div>
+					</div>
+				</div>
+				<div id=output>
+				</div>
+			    </div><!-- /example -->
+			</div>
+		</div>
+
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		      	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+		      </div>
+		      <div class="modal-body" id="popupChartBS">
+		        <div class="row-fluid col-sm-11"><svg width="100%" height="445"></svg></div>
+		        <div class="row-fluid col-sm-1 no-padding fill-color btn-group-vertical full-width" id="popupSlice"></div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+
+        <script src="javascript/libs/jquery-2.1.4.min.js"></script>
+        <script src="javascript/libs/jquery.uriAnchor.js"></script>
+        <script src="javascript/libs/d3.v3.min.js"></script>
+        <script src="javascript/libs/canvg.js"></script>
+        <script src="javascript/libs/rgbcolor.js"></script>
+        <script src="javascript/libs/stackblur.js"></script>
+        <script src="javascript/libs/nv.d3.min.js"></script>
+        
+        <script src="javascript/dashboard/dashboardData.js"></script>
+        <script src="javascript/dashboard/dashboard.js"></script>
+
+    </body>
+</html>
