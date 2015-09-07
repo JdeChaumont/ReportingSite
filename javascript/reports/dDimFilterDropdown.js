@@ -2,7 +2,7 @@
 // Dimension Filter
 //*******************************************************************************
 //
-function dDimFilter(options){ // wraps customised nvd3 horizontal bar chart
+function dDimFilterDropdown(options){ // wraps customised nvd3 horizontal bar chart
     // Preliminary items - defaults - call base function
     var defaults = {
         state : state,
@@ -23,9 +23,46 @@ function dDimFilter(options){ // wraps customised nvd3 horizontal bar chart
     var chartData = ret.chartData;
     var currentFilter = ret.filter;
     var filterCache = [];
-    var filterChain = [];
+    var filterChain = [], filterChainValid = true;
     var filter;
     var expanded = false;
+
+    // Set controls - this is configuratrion really
+    var ctrls = d3.select(o.containerCtrls);
+    var ctrlsId = ctrls.attr("id");
+    if(ctrlsId===""){ ctrlsId = uniqueId(); }  // TODO : generate unique ID
+    var inline = "display:inline-block";
+    var controls = [
+        /*{ id : ctrlsId + "Bk", css :  "btn btn-custom btn-sm back", style : inline, handlers : [hHelper("click","back")], text : "Undo" },*/
+        { id : ctrlsId + "Rst", css :  "btn btn-custom reset", style : inline, handlers : [hHelper("click","reset")], text : "Reset" },
+        { id : ctrlsId + "Sts", css :  "status", style : inline, text : "" },
+        { id : ctrlsId + "DD", css :  "selectivity-input", style : inline, text : "Add Filter", createFn : createDD  },
+    ];
+    function hHelper(name,property){
+        return { "name" : name, "handler" : function(e) { ret['property'](); } }
+    }
+
+    function createDD(el){
+        var elDom = $('#'+el['id']); //console.log(getDimsValues());
+        elDom.selectivity({
+            allowClear: true,
+            items: getDimsValues(),
+            placeholder: el['text'],
+            showSearchInputInDropdown: false
+        }).on("change",onDDChange(elDom)); // need to add handler
+        //console.log(elDom.selectivity('value'));
+    }
+
+    function onDDChange(el){
+        return function(e){
+            var update = {};
+            var tuple = e['value'].split("|");
+            //console.log(e);
+            update[tuple[0]]=tuple[1]; //cannot create the update object direct
+            anchor.changeAnchorPart(update);
+            el.selectivity('value',null); //timing seems to be important here
+        }
+    }
 
     ret.expanded = function(){
         expanded=!expanded;
@@ -39,6 +76,7 @@ function dDimFilter(options){ // wraps customised nvd3 horizontal bar chart
         // need to hook up to state object - create properties and values
         filter = filterCache[0] = o.source.filter;
         var data = filter['aggregate']; //console.log(data);
+        ret.dims = {};
         o.dims.forEach(function(e,i,a){
             e['range'] = {}; // add range to dims
             var id = e['name'];
@@ -49,10 +87,12 @@ function dDimFilter(options){ // wraps customised nvd3 horizontal bar chart
                 e['range'][d] = (vals.length-1); // add range to put index for stateFilter
             }
             stateFilter(o.state,id,vals); // create stateFilter for each dim - do not need map and handlers
-        });
+            ret.dims[e['name']] = i; // add associative array
+        }); // console.log(o.dims);
         state.addHandler(0,filterUpdate); // add handler to state object - fired for all anchor changes
         ret.chartData = reshapeFilterData(data);
         createChart();
+        createControls(controls);
         return ret;
     }
 
@@ -90,23 +130,25 @@ function dDimFilter(options){ // wraps customised nvd3 horizontal bar chart
         } else if((!key&&filterCache.length>1)||(count>0&&filtered===false)){ // reset to no filter
             filterCache = filterCache.slice(0,1);
             filterChain = [];
+            filterChainValid = true;  // filterChain has been reset and is valid
             o.source.reset();
         } else if(count===1){ // one dim has changed
             var lastFilter = (dim===filterChain[filterChain.length-1]); //alert("dim:"+dim+"; FilterChain[Last]:"+filterChain[filterChain.length-1]+"; Value:"+value);
             var filterValueSelected = (value!==o.all);
-            if(filterChain.length>0&&lastFilter===true){  // toggle off last dim
+            if(filterChain.length>0&&filterChainValid===true&&lastFilter===true){  // toggle off last dim
                 filterCache.pop();
                 filterChain.pop();
                 filter=filterCache[filterCache.length-1];
                 o.source.reset(filter);
-                if(filterValueSelected===true){ // Dim has been changed to a filtered value
+                if(filterValueSelected===true){ // Dim has been changed to a filtered value - Handles setting of value from controls e.g. change portfolio from HL to BTL
                     filterCache.push(o.source.xFilter(filter,dim,value)); // add new dim JSON.parse(JSON.stringify(o.source.filter));
                     filterChain.push(dim);
                 }
-            } else if(filterValueSelected===true) { // filter has selected
-                if(filterChain.indexOf(dim)>0){ // check not existing filter
+            } else if(filterValueSelected===true) { // filter been has selected
+                if(filterChain.indexOf(dim)>0){ // check if existing filter - in which case refresh
                     filterCache = filterCache.slice(0,1);
-                    filterChain = [];
+                    filterChain.splice(filterChain.indexOf(dim),1);  // remove
+                    filterChainValid = false; // Chain not valid with cache
                     filterCache.push(o.source.xFilter(filter,selected)); //reset
                 } else {
                     filterCache.push(o.source.xFilter(filter,dim,value)); // add new dim JSON.parse(JSON.stringify(o.source.filter));
@@ -114,12 +156,14 @@ function dDimFilter(options){ // wraps customised nvd3 horizontal bar chart
                 }
             } else {
                 filterCache = filterCache.slice(0,1);
-                filterChain = [];
+                filterChain = Object.keys(selected).filter(function(e,i,a){ return selected[e]!=='_'; }); // This creates a problem for status as no chain to populate status
+                filterChainValid = false; // Chain not valid with cache
                 filterCache.push(o.source.xFilter(filter,selected)); //reset
             }
         } else { //multiple changed - recalculate filter
             filterCache = filterCache.slice(0,1);
-            filterChain = [];
+            filterChain = Object.keys(selected).filter(function(e,i,a){ return selected[e]!=='_'; }); // This creates a problem for status as no chain to populate status
+            filterChainValid = false; // Chain not valid with cache
             filterCache.push(o.source.xFilter(filter,selected)); //reset
         }
         t.lap("cache updated");
@@ -148,7 +192,7 @@ function dDimFilter(options){ // wraps customised nvd3 horizontal bar chart
     // function to requery and update
     ret.update = function(){
         // function to update - called from state manager
-        var key = {};
+        var key = {}, selectedCount = 0;
         o.dims.forEach(function(e,i,a){
             key[e['name']] = o.state[e['name']]()||'_'; // get values from state - dims have been attached
         });
@@ -157,7 +201,43 @@ function dDimFilter(options){ // wraps customised nvd3 horizontal bar chart
             .datum(ret.chartData)
             .transition().duration(300)
             .call(ret.chart);
+        // update status
+        d3.select('#'+ctrlsId+"Sts").html(currentStatus(key)); // don't like the status reference
+        d3.selectAll('#'+ctrlsId+"Sts div").on("click",popStatus);
         return ret;
+    }
+
+    var popStatus = function(e){
+            var update = {};
+            update[d3.select(this).attr("value")] = 0;
+            anchor.changeAnchorPart(update);
+    }
+
+    function currentStatus(key){
+        if(filterChain.length===0)
+                return "";
+        return  filterChain.reduce(function(r,e,i,a){ return r + div(" " + (i+1) + "."+o.dims[ret.dims[e]]['display']  + "=" + ret.decode(e,key[e]),e); }, div("Filter:",""));
+
+        function div(text, dim){ // helper function
+            return "<div style='display:inline-block' value='"+dim+"'>"+text+"</div>"
+        }
+    }
+
+    // Not used at present
+    function keysSelected(key){
+        return Object.keys(key).reduce(function(r,e,i,a){
+            if(key[e]==='_'){
+                return r;
+            }
+            return ++r;
+        },0);
+    }
+
+    ret.decode = function(dim,value){
+        if(!o.dimsEncoded){
+            return value;
+        }
+        return o.dimsEncoded[dim] ? o.dimsEncoded[dim]['encoded'][value]||value : value;
     }
 
     function orderDims(){ // add an object to sort
@@ -167,7 +247,7 @@ function dDimFilter(options){ // wraps customised nvd3 horizontal bar chart
                 if(typeof e['order']!=="string"){ // ordered array
                     e['dimOrder'] = {};
                     e['order'].forEach(function(f,j,k){
-                        v =  (o.dimsEncoded&&o.dimsEncoded[e['name']]) ? o.dimsEncoded[e['name']]['values'][f] || f : f;
+                        v =  ret.decode(e['name'],f);
                         e['dimOrder'][v] = j;
                     });
                 }
@@ -195,7 +275,7 @@ function dDimFilter(options){ // wraps customised nvd3 horizontal bar chart
                 ord = e['dimOrder'];
                 for(d in dim){ //could push and then order
                     p = { 'label' : d, 'index' : e['range'][d],'value' : dim[d]['sum'][def.u()][def.c()] }; // NEEDS TO CHANGE HARD CODED INDEX
-                    p['display'] = (o.dimsEncoded&&o.dimsEncoded[e['name']]) ? o.dimsEncoded[e['name']]['encoded'][d]||d : d;
+                    p['display'] = ret.decode(e['name'],d);
                     if(p['value']>0&&filtered[e.name]) { p['filtered']=true; }
                     if(ord&&ord[d]>=0){ // 0 was being evaluated as not found
                         ordered[ord[d]] = p;
@@ -211,16 +291,9 @@ function dDimFilter(options){ // wraps customised nvd3 horizontal bar chart
                 }
                 res.push(s);
             }
-        });
+        }); console.log(res);
         return res;
     }
-
-    // get new filter from state
-    // compare with existing filter
-    // if no difference - do nothing
-    // if one difference  - re-run filter
-    //
-    // else reset
 
     function createChart(){
         nv.addGraph(function() {
@@ -262,6 +335,47 @@ function dDimFilter(options){ // wraps customised nvd3 horizontal bar chart
           return ret.chart;
         });
     }
+
+    var getDimsValues = function(){
+        // var d = reshapeFilterData(filter['aggregate']); // much more data than necessary - streamline later
+        var d = ret.chartData;
+        return d.map(function(e,i,a){
+            return {
+                'id' : e["dim"],
+                'text' : e["key"],
+                'submenu' : {
+                    'items' : e["values"].map(function(f,j,b){
+                        return {
+                            'id' : e["dim"]+"|"+f["index"],
+                            'text' : f["display"]
+                        };
+                    }),
+                    'showSearchInput': false
+                }
+            };
+        });
+    }
+
+    // Create controls for the function
+    function createControls(){
+        // create the controls
+        controls.forEach(function(e,i,a){
+            var c = ctrls.append('div')
+                .attr("id",e["id"])
+                .attr("class",e["css"])
+                .attr("style",e["style"])
+                .text(e["text"]);  // seems to work if no text field
+            if(e["handlers"]){
+                e["handlers"].forEach(function(f,j,b){
+                    c.on(f["event"],f["handler"]);
+                });
+            }
+            if(e["createFn"]){
+                e["createFn"](e);
+            }
+        });
+    }
+
     return ret.init(o);
 }
 
@@ -280,45 +394,4 @@ function stateFilter(stateObj,id,states,map,handlers){ //code should be segmente
         handlers.forEach(function(e,i,a){ stateObj.addHandler(refNo,e); });
     }
     return refNo; //not sure there is any need to return an object
-}
-
-/* Format of objects passed in...
-    state : <?> //should we hook up handlers directly
-    source : <filter> //not provider
-    container : "",
-    dims :
-        [
-            {
-                dim : <dim1>,
-                display : '',
-                order : < null, 'asc', 'desc', [<val1>,<val2>...],
-                colours : paletteSelect(palette,reverse)
-            }
-        ]
-
-*/
-
-var palettes = {};
-//palettes['portfolio'] = { 'HL' : '#f58025', 'BTL' : '#221f73', 'CRE' : '#006393', 'SB' : '#777777', 'UNS' : '#333333', 'CHL' : '#0091bf'};
-palettes['portfolio'] = ['#f58025', '#221f73', '#006393', '#777777', '#333333', '#0091bf'];
-//palettes['binary'] = ["#99000d","#989898"];
-palettes['binary'] = ["#08306b","#6baed6"];
-palettes['tarnish20'] = ["#3C4244","#D2C1C2","#83817E","#A6BCC3","#556469","#95929D","#726B78","#AEACBB","#544953","#BBBBB3","#707E84","#CBC5D1","#CBB7AE","#949999","#696D6E","#C3C5C8","#7C8A8E","#686770","#C4BBB2","#596164"];
-palettes['shades20'] =["#D4E2B2","#2F271B","#8F8E8B","#BCA377","#F2F7E8","#FCD2A3","#B9BFB5","#8DA286","#B1B98D","#B4A795","#EEEBA9",
-"#E9DCB7","#F3F8D6","#ACC8A3","#CBD8C8","#CAA383","#E9E2D5","#A6BAB1","#D4EBBF","#C5AF7C"];
-palettes['regions'] = ["#395692","#91B2D9","#2F699D","#915B5B","#CC7F80","#4B564E","#9DB8A4","#5A4C4C"];
-palettes['mekkoA'] = createMekkoColours(['Oranges','Blues','Greys','Reds','Greens','Purples','Set1','Set2','Set3','Pastel1','Pastel2'], colorbrewer, 8, 7);
-palettes['mekko'] = ['#001144','#202020','#440000','#004400','#110044','#004444','#440011','#000044','#444400','#440044','#114400','#441100'];
-var paletteSelector = function(palette,reverse){
-    return function(e,i){
-            return palette[e]?palette[e]:palette[(reverse?palette.length-i:i)];
-    }
-}
-palettes['d3Grads'] = d3.scale.category20c().range();
-palettes['grads'] = colorbrewer['RdBu'][11].slice(7,11).reverse().concat(palettes['d3Grads'].slice(4,7)).concat(colorbrewer['PRGn'][11].slice(7,11).reverse()).concat(colorbrewer['PRGn'][11].slice(0,4)).concat(colorbrewer['RdBu'][11].slice(0,4));
-palettes['d3Grads'] = d3.scale.category20c().range();
-function createMekkoColours(colours,source,range,index){
-    return colours.map(function(e,i,a){
-        return source[e][range][index];
-    });
 }

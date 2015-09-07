@@ -19,6 +19,7 @@ var numPeriods = periods.mth.length;
 //*******************************************************************************
 //Step 4 - Create Dashboard - moved from jdcGrid
 //*******************************************************************************
+var iter = 0;
 //Defaults for report defnition - Helper function for accessing state properties
 function reportDefaults(current,YTDMths){
     var ret = {};
@@ -31,7 +32,9 @@ function reportDefaults(current,YTDMths){
     ret.l = function(){return current-1;};
     ret.ly = function(){return current-12;};
     ret.ytd = function(){return YTDMths;};
-
+    ret.dimSelected = function(){ //if(++iter>4) return 'dpd'; return 'prt'};
+        return state.rptDim()};
+    ret.s = function(){return (state.rptRange() > 0 ? 0 : ret.c() );};
     return ret;
 }
 var def = reportDefaults(numPeriods-1,0);
@@ -69,9 +72,9 @@ function loadReport(){
 
     $(".splash").slideUp('slow');
 
-    dataNew = payLoad(); // console.log(dataNew);
-    //console.log(dataNew);
-    //console.log(dataNew.data[0]);
+    dataNew = payLoad();
+    console.log(dataNew);
+    console.log(dataNew.data[0]);
 
     //*******************************************************************************
     // Create User Interface
@@ -87,7 +90,7 @@ function loadReport(){
     //*******************************************************************************
     //Changed to dropdown
     var report = stateElementDropdown(state, "report", "dropdown-style",
-        ["Group Overview","Arrears Performance", "Forbearance", "Rate Characteristics", "Loan Size distribution","Loan to Value", "Geographic Distribution", "Counties", "Marimekko"],null,
+        ["Group Overview","Arrears Performance", "Forbearance", "Rate Characteristics", "Loan Size distribution","Loan to Value", "Geographic Distribution", "Marimekko"],null,
         [reportChange("rpt"),outputStyle("rpt")]); //Additional Handler to fade in/out pages
 
     //Handler to add to report state to test output of getComputedStyle
@@ -111,14 +114,15 @@ function loadReport(){
     dReport( { 'container' : '#rpt4', 'body' : { 'id' : 'rptLoanSize'}, 'title' : { 'html' : 'Loan Size Profile' }, 'controls' : [ { 'class' : 'btn-group pull-right rptPage'} ] } );
     dReport( { 'container' : '#rpt5', 'body' : { 'id' : 'rptLTV'}, 'title' : { 'html' : 'Indexed Loan To Value Profile' }, 'controls' : [ { 'class' : 'btn-group pull-right rptPage'} ] } );
     dReport( { 'container' : '#rpt6', 'body' : { 'id' : 'rptGeo'}, 'title' : { 'html' : 'Geographic Distribution' }, 'controls' : [ { 'class' : 'btn-group pull-right rptPage'} ] } );
-    dReport( { 'container' : '#rpt7', 'body' : { 'id' : 'rptCounties'}, 'title' : { 'html' : 'Counties' }, 'controls' : [ { 'class' : 'btn-group pull-right rptPage'} ] } );
-    dReport( { 'container' : '#rpt8', 'body' : { 'id' : 'mekkoChart', 'style' : 'display:block;padding:0'}, 'controlsContainer' : { 'style' : 'padding:0;display:block;margin-left:30px;margin-right:auto' },'controls' : [ {'id':'mekkoV','class':"wrapper-dropdown-1"},{'id':'mekkoH','class':"wrapper-dropdown-1"} ] } );
+    dReport( { 'container' : '#rpt7', 'body' : { 'id' : 'mekkoChart', 'style' : 'display:block;padding:0'}, 'controlsContainer' : { 'style' : 'padding:0;display:block;margin-left:30px;margin-right:auto' },'controls' : [ {'id':'mekkoV','class':"wrapper-dropdown-1"},{'id':'mekkoH','class':"wrapper-dropdown-1"} ] } );
     // Hack - because cannot dynamically determine DOM type
     d3.select('#mekkoChart').append('svg');
-
-    var rptPortfolio = stateElement(state, "prt", css,["All","HL","BTL"],["_","b","a"],null,0,[0,2,1]);
-    var rptPeriod = stateElement(state, "rptPeriod", cssBtnSm,["2013","2014","Q1 2015"],[0,1,2],null,2);
-    var rptUOM = stateElement(state, "uom", cssBtnSm,["€", "#"],['bal','count']);
+    var rptPortfolio = stateElement(state, "prt", css,["All","HL","BTL","Commercial","CHL","IoM","Consumer"],["_","d","a","c","b","e","f"],null,0,[0,4,1,3,2,5,6]);
+    //var rptPeriod = stateElement(state, "rptPeriod", cssBtnSm,["Q413","Q114","Q214","Q314","Q414","Q115","Q215"],[0,1,2,3,4,5,6],null,6);
+    var rptPeriod = stateElementDropdown(state, "rptPeriod", "dropdown-style",["Q4 2013","Q1 2014","Q2 2014","Q3 2014","Q4 2014","Q1 2015","Q2 2015"].reverse(),[0,1,2,3,4,5,6].reverse(),null,0);//,"font-size:10pt;padding-top:5px;height:30px");
+    var rptUOM = stateElement(state, "uom", css,["€", "#","Provision"],['bal','count','prv']);
+    var rptDim = stateElement(state, "rptDim", css,["Portfolio","Division","Region","Arrears","Repayment","Rate Type","LTV"],["prt","ent","region","dpd_band","repay_type","int_rate_type","ltv_band"],null,0,[0,1,2,3,4,5,6]);
+    var rptRange = stateElement(state, "rptRange", css,["Current","All"],[0,1]);
 
     //*******************************************************************************
     // Set-up Data
@@ -134,8 +138,9 @@ function loadReport(){
         { 'name' : 'dpd', 'derivedFrom' : 'dpd_band', 'grpFn' : grpCategories(dpdMap,">90") },
         { 'name' : 'forborne', 'derivedFrom' : 'fb', 'grpFn' : grpCategories(encodeValueMap('fb',{ "No":"N"}),"Y") },
         { 'name' : 'secured', 'derivedFrom' : 'ltv_band', 'grpFn' : grpCategories(encodeValueMap('ltv_band',{ "LTVexclusions":"N","NA":"N"}),"Y") },
+        { 'name' : 'arrs', 'derivedFrom' : 'dpd_band', 'grpFn' : grpCategories(encodeValueMap('dpd_band',{ "UTD":"N" }),"Y") },
     ];
-    dataDims = ['dpd','forborne','secured'].concat(dataDims);
+    dataDims = ['dpd','forborne','secured','arrs'].concat(dataDims);
     // console.log(dataDims);
 
     // Helper functions to help with encoded/decoding
@@ -219,9 +224,10 @@ function loadReport(){
         'periods' : numPeriods,
         'filtered' : true,
         'cubes' : [['prt','ent','sector','repay_type','int_rate_type']],
-        'measures' : ['count','bal','arrs','prv','ew_DiA','ew_iLTV','ew_int_rate','ew_rem_term','ew_TOB']
+        'measures' : dataNew['measures'], //['count','bal','arrs','prv','ew_DiA','ew_iLTV','ew_int_rate','ew_rem_term','ew_TOB']
+        'val' : ['bal','count','prv']
         });
-    //console.log(dbData);
+    // console.log(dbData);
     pxf = dProviderArray({ 'dims' : dataDims, 'src' : [{"id" : "_", "data" : dbData }], 'periods' : numPeriods});
 
     //*******************************************************************************
@@ -232,12 +238,13 @@ function loadReport(){
         'state' : state //should we hook up handlers directly
         ,'source' : dbData //not provider
         ,'container' : '#filterChart svg'
+        ,'containerCtrls' : '#filter'
         ,palette : colorbrewer['Blues'][9].reverse()
         ,'dims' : filterDims
-        , 'dimsEncoded' : dimsEncoded
+        ,'dimsEncoded' : dimsEncoded
     }
 
-    var mainFilter = dDimFilter(filterOptions);
+    var mainFilter = dDimFilterDropdown(filterOptions);
     //console.log(mainFilter);
 
     // Button Functionality for dDimFilter - to go into dDimFilter
@@ -302,7 +309,6 @@ function loadReport(){
     }
     var rptPage = stateElement(state, "rptPage", cssBtnSm,["Exposure","Stats", "KPI's"],["0", "1", "2"],[pageChange("pg")]);
 
-    //
     //*******************************************************************************
     //Step 4.2 - Initialise Dashboards
     //*******************************************************************************
@@ -314,7 +320,6 @@ function loadReport(){
     var reportDef4 = rptDef4();
     var reportDef5 = rptDef5();
     var reportDef6 = rptDef6();
-    var reportDef7 = rptDef7();
 
     var rptDiv = rpts[reportDef0.name] = rpts[reportDef0.ref] = jdcGrid({source : pxf, def: reportDef0, pageCtrl : state['rptPage'] });
     var rptArrs = rpts[reportDef1.name] = rpts[reportDef1.ref] = jdcGrid({source : pxf, def: reportDef1, pageCtrl : state['rptPage'] });
@@ -323,7 +328,6 @@ function loadReport(){
     var rptLoanSize = rpts[reportDef4.name] = rpts[reportDef4.ref] = jdcGrid({source : pxf, def: reportDef4, pageCtrl : state['rptPage'] });
     var rptLTV = rpts[reportDef5.name] = rpts[reportDef5.ref] = jdcGrid({source : pxf, def: reportDef5, pageCtrl : state['rptPage'] });
     var rptGeo = rpts[reportDef6.name] = rpts[reportDef6.ref] = jdcGrid({source : pxf, def: reportDef6, pageCtrl : state['rptPage'] });
-    var rptCounties = rpts[reportDef7.name] = rpts[reportDef7.ref] = jdcGrid({source : pxf, def: reportDef7, pageCtrl : state['rptPage'] });
 
     //state.addView({ref:0, update:function(){return 0;}},0);
     state.addView(rptDiv,0);
@@ -333,7 +337,108 @@ function loadReport(){
     state.addView(rptLoanSize,4);
     state.addView(rptLTV,5);
     state.addView(rptGeo,6);
-    state.addView(rptCounties,7);
+
+    //*******************************************************************************
+    //Initialise KPI Dashboards
+    //*******************************************************************************
+    //KPI Helper functions
+    function growth(metric,interval){
+        return metric[def.c()]/metric[def.c()-interval]-1;
+    }
+    function prefix(text){
+        return function(value){
+            return text+value;
+        }
+    }
+    function suffix(text){
+        return function(value){
+            return value+text;
+        }
+    }
+    function splitFigure(value){
+        var i = 0, magnitudes = ['k','m','bn','%'];
+        do {
+            m = value.indexOf(magnitudes[i++]);
+        } while (m<0);
+        if(m<0) return value;
+        return value.substring(0,m).trim()+"<div class='suffix'>"+value.substring(m)+"</div>";
+    }
+    //KPI Templates
+    function kpiCells(title, kpiDefn){
+        return [
+            { type : 'cell', css : 'title', style :  '', value : function(){ return title; }, tooltip : 'Portfolio Selected' },
+        	{
+                type : 'cell',
+                css : 'kpi',
+                style :  '',
+                key : kpiDefn,
+                value : function(d){ var tgt = d['kpi']['value']; return tgt[def.c()]; },
+                valueApply : [rptFmt2,splitFigure],
+                tooltip : "Key Indicator",
+                eventHandlers : { 'click' : cellClicked }
+            },
+            { type : 'cell', css : 'stat', style :  '', value : function(d){ return (d['kpi']['value'][def.c()]/d['all']['value'][def.c()]); }, valueApply : [fp], tooltip : "% Total" },
+        	{ type : 'sparkbar', css : 'sparkline', style :  '', value : function(d){
+                return cellSeries(d['kpi']['value'].slice(0,def.c()+1)); }//return d['core'][0].slice(def.c,-13) }
+                , tooltip : "Trend" } ,
+            { type : 'cell', css : 'stat', style :  '', value : function(d){ return growth(d['kpi']['value'],1); }, valueApply : [rptFmt2,prefix("Qtr:")], tooltip : "Quarterly Growth" },
+            { type : 'cell', css : 'stat', style :  '', value : function(d){ return growth(d['kpi']['value'],4); }, valueApply : [rptFmt2,prefix("Yr:")], tooltip : "Annual Growth" },
+            { type : 'sparkline', css : 'sparkline', style :  '', value : function(d){
+                return cellSeries(d['kpi']['value'].slice(0,def.c()+1)); }//return d['core'][0].slice(def.c,-13) }
+                , tooltip : "Trend" } ,
+            {
+                type : 'stacked',
+                css : 'chart',
+                style :  '',
+                value : function(d){ return d['stack']['value'].map(function(e,i,a){ return { key : e['key'], values : e['values'].slice(def.s(),def.c()+1) }; }) },
+                object : 'chart',
+                tooltip : "Sub-analysis",
+                keysOrdered : true
+            }
+        ];
+    }
+    //KPI Templates
+    function kpiFactory(ref,name,container,kpiDefn,title){
+        var ret = {};
+        ret['ref'] = ref;
+        ret['name'] = name;
+        ret['container'] = container;
+        ret['source'] = pxf;
+        ret['dims'] = filterDims;
+        ret['palette'] = name;
+        ret['data'] = {
+            kpi : { key :kpiDefn },
+            all : { key : kpiDefnAll },
+            stack : { key : function(d){
+                return sortDims(d.segmentSubAnalyse(kpiDefn,null,def.dimSelected()),dimsOrdered[def.dimSelected()]); }
+            }
+        }
+        ret['cells'] = kpiCells(title,kpiDefn);
+        return ret;
+    }
+    //KPI Definitions
+    var kpiDefnAll = defaultDims(dataDims,state,{ mre : def.u});
+    var kpiStacks = [
+            { 'ref' : 0, 'name' : 'kpiAll', 'defn' : kpiDefnAll, 'title' : 'Portfolio'},
+            { 'ref' : 1, 'name' : 'kpiPL', 'defn' : defaultDims(dataDims,state,{ mre : def.u, npl : 'a'}), 'title' : 'Performing'},
+            { 'ref' : 2, 'name' : 'kpiFB', 'defn' : defaultDims(dataDims,state,{ mre : def.u, forborne : 'Y'}), 'title' : 'Forborne'},
+            { 'ref' : 3, 'name' : 'kpiArr', 'defn' : defaultDims(dataDims,state,{ mre : def.u, arrs : 'Y'}), 'title' : 'Arrears'},
+            { 'ref' : 4, 'name' : 'kpi90plus', 'defn' : defaultDims(dataDims,state,{ mre : def.u, dpd : '>90'}), 'title' : '90 plus'},
+            { 'ref' : 5, 'name' : 'kpiNPL', 'defn' : defaultDims(dataDims,state,{ mre : def.u, npl : 'b'}), 'title' : 'NPL'},
+            { 'ref' : 6, 'name' : 'kpiImp', 'defn' : defaultDims(dataDims,state,{ mre : def.u, impaired : 'b'}), 'title' : 'Impaired'},
+            //{ 'ref' : 7, 'name' : 'kpiCls', 'defn' : kpiDefnAll, 'title' : 'Closures'}
+    ];
+
+    var kpi = d3.select("#kpiStack").selectAll('div').data(kpiStacks); //console.log(kpi);
+    var kpiEnter = kpi.enter().append('div')
+        .attr('id',function(d){ return d['name']; })
+        .attr('class','kpiStack'); //console.log(kpiEnter);
+
+    kpiStacks.forEach(function(e,i,a){
+        var opts = kpiFactory(e['ref'],e['name'],'#'+e['name'],e['defn'],e['title']);
+        var rpt = rpts[opts.name] = rpts[opts.ref] = dKPI( opts );
+        state.addView(rpt,0);
+    });
 
     //*******************************************************************************
     // Marimekko chart
@@ -389,16 +494,48 @@ function loadReport(){
     var mekko = dDimMekko(mekkoOptions);
     //console.log(mekko);
 
-    var rptMekko = rpts["rpt8"] = rpts[8] = mekko;
-    state.addView({ref:8, update:rptMekko.update },8); // will add to views and update called when view is active
+    var rptMekko = rpts["rpt7"] = rpts[7] = mekko;
+    state.addView({ref:7, update:rptMekko.update },7); // will add to views and update called when view is active
 
     //*******************************************************************************
     //Step 5 - Set-up event handler and finalise
     //*******************************************************************************
     $(window) //move this to bottom
         .bind( 'hashchange', function(e) { anchor.onHashchange(e);  } )
-    anchor.changeAnchorPart({report:0});
-
+    anchor.changeAnchorPart({report:"0"});
+    //updateReport();
     $('#top-banner').slideUp(2000);
 
+    // Test kpi update
+    /*$(document).click(function() {
+        // all dropdowns
+        //alert('Title clicked');
+        kpiTest.update(); console.log(kpiTest);
+        return;
+    });*/
+    // Testing
+    $(document).click(function() {
+        console.log(pxf.dimsValues());
+        return;
+    });
+}
+
+function updateReport(){
+    var tempAnchor, anchorMapInit = {};
+    try { tempAnchor = $.uriAnchor.makeAnchorMap(); }
+    catch ( error ) {
+        anchor.changeAnchorPart({report:0});
+    }
+    console.log(tempAnchor);
+    if(!tempAnchor||!tempAnchor["report"]) {
+        anchor.changeAnchorPart({prt:"0",report:"0"});
+    } else {
+        for(var k in tempAnchor){
+            if(k.indexOf('s_')===-1&&tempAnchor.hasOwnProperty(k)){
+                anchorMapInit[k] = tempAnchor[k];
+            }
+        }
+        console.log(anchorMapInit);
+        anchor.changeAnchorPart(anchorMapInit); //- this won't work
+    }
 }

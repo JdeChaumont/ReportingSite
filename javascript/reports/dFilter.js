@@ -499,6 +499,30 @@ function dFilter(options){
         }
     }
 
+    // 20150810 - Function to retrieve dims and ranges
+    ret.dimsValues = function(){
+        var res = {}, ndx = ret.filter['indexes'];
+        for(var k in ndx){
+            if(ndx.hasOwnProperty(k)){
+                res[k] = ret.decodeRange(k,ndx[k]['range']);
+            }
+        }
+        return res;
+    }
+
+    ret.decodeRange = function(dim,range){
+        if(!o.dimsEncoded){
+            return range;
+        }
+        return range.map(function(e,i,a){
+            return ret.decode(dim,e);
+        });
+    }
+
+    ret.decode = function(dim,value){
+        return o.dimsEncoded[dim] ? o.dimsEncoded[dim]['encoded'][value]||value : value;
+    }
+
     return ret.init(o);
 }
 

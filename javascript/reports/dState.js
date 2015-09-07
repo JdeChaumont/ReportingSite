@@ -191,24 +191,30 @@ var createButtonSet = function(container,btns,css,events){
 		.on("click",events.click);
 }			//Config - Button to data field mapping
 
-var createDropdown = function(container,states,css,events){
+var createDropdown = function(container,states,css,events,defaultValue,style){
 	var dropdown = d3.selectAll(container)
 		.append('select')
 		.attr("class", 'selectpicker')
-		.attr("style","font-style:italic");
+		.attr("style","font-style:italic")
+		//.attr("data-title",states[defaultValue]['name'])
+		;
 	var btns = d3.selectAll(container).selectAll('select').selectAll('option')
 		.data(states)
 	.enter().append('option')
 		.attr("value", ƒ("value"))
-		.html(ƒ("name"));
+		.html(ƒ("name"))
+		//.attr("selected",function(d){ return d["value"]===defaultValue});
 	// Unable to get D3 to work
 	dropdown = $(container+' .selectpicker');
 	dropdown.selectpicker();
 	dropdown.on("change",events.change);
 	// Styling
 	dropdown = d3.selectAll(container+' .selectpicker');
-	//dropdown.attr("style","font-size:12pt");
 	dropdown.classed(css,true);
+	if(style) {
+		dropdown = d3.selectAll(container).selectAll('button')
+			.attr("style",style);
+	}
 	dropdown = d3.selectAll(container).selectAll('select')
 		.attr("style","display:none");
 }
@@ -308,7 +314,7 @@ function stateElement(stateObj,id,css,states,map,handlers,defaultValue,index){ /
 //returns an associative array of values
 //btns.id drives hook up with Anchor management and state
 //member no longer used - array of controls now used driven by refNo - refNo could be derived and returned
-function stateElementDropdown(stateObj,id,css,states,map,handlers,defaultValue){ //code should be segmented
+function stateElementDropdown(stateObj,id,css,states,map,handlers,defaultValue,style){ //code should be segmented
 	var values = {}, schema = {}, buttons = [], s = stateObj || state, h = "stateHandlers", refNo;
 
 	buttons = states.map(function(e,i,a){
@@ -317,9 +323,7 @@ function stateElementDropdown(stateObj,id,css,states,map,handlers,defaultValue){
 		return { name : e , value : i };
 	});
 
-	//createButtonSet('.'+id,buttons,css,{ click : stateBtnHandler(id,stateObj.anchorMgr) });
-	createDropdown('.'+id,buttons,css,{ change : stateBtnHandler(id,stateObj.anchorMgr) });
-	//createDropdown('.'+id,buttons,css,{ click : function(){alert(this.value);} });
+	createDropdown('.'+id,buttons,css,{ change : stateBtnHandler(id,stateObj.anchorMgr) },defaultValue||0,style);
 
 	refNo  = s.addControl(id,values,schema,stateProperty,null,defaultValue||0)
 
