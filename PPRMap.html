@@ -3,9 +3,10 @@
 
 <head>
     <meta charset="utf-8">
+    <link href="~/ptsb.ico" rel="shortcut icon" type="image/x-icon" />
     <title>PPR Map</title>
     <link href="./css/libs/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="./css/libs/leaflet.css" rel="stylesheet" type="text/css">
+    <link href="./css/libs/leaflet.css" rel="stylesheet" type="text/css"> 
     <link href="./css/PPRmap/map.css" rel="stylesheet" type="text/css">
 </head>
 
@@ -134,39 +135,37 @@
       </table>
     </div>
 
-<!-- Libraries -->
-<script src="javascript/libs/d3.v3.min.js"></script>
-<script src="javascript/libs/topojson.v1.min.js"></script>
-<script src="javascript/libs/d3.hexbin.v0.min.js"></script>
-<script src="javascript/libs/jquery-2.1.4.min.js"></script>
-<script src="javascript/libs/jquery.uriAnchor.js"></script>
-<script src="javascript/libs/leaflet.js"></script>
+    <!-- Libraries -->
+    <script src="javascript/libs/d3.v3.min.js"></script>
+    <script src="javascript/libs/topojson.v1.min.js"></script>
+    <script src="javascript/libs/d3.hexbin.v0.min.js"></script>
+    <script src="javascript/libs/jquery-2.1.4.min.js"></script>
+    <script src="javascript/libs/jquery.uriAnchor.js"></script>
+    <script src="javascript/libs/leaflet.js"></script>
 
-<!-- Filtering and state tracking utilities -->
-<script src="javascript/PPRMap/jdcUtils.js"></script>
-<script src="javascript/PPRMap/jdcState.js"></script>
-<script src="javascript/PPRMap/jdcGrid.js"></script>
-<script src="javascript/PPRMap/dProvider.js"></script>
-<script src="javascript/PPRMap/dFilterBase.js"></script>
+    <!-- Filtering utilities -->
+    <script src="javascript/PPRMap/jdcUtils.js"></script>
+    <script src="javascript/PPRMap/jdcGrid.js"></script>
+    <script src="javascript/PPRMap/dProvider.js"></script>
+    <script src="javascript/PPRMap/dFilterBase.js"></script>
 
-<!-- Geomteric Information and Census Data -->
-<script src="javascript/PPRMap/maps_Admin_Cty.js"></script>
-<script src="javascript/PPRMap/maps_ED.js"></script>
-<script src="javascript/PPRMap/maps_SA.js"></script>
-<script src="javascript/PPRMap/census_Data_Cty_ED_SA.js"></script>
+    <!-- Geometric Information (i.e. information for D3 map) and Census Data -->
+    <script src="data/maps_Admin_Cty.js"></script>
+    <script src="data/maps_ED.js"></script>
+    <script src="data/maps_SA.js"></script>
+    <script src="data/census_Data_Cty_ED_SA.js"></script>
+    <!-- Data for "Small-area" level -->
+    <script src="data/dataPPRCSV_20150624.js"></script>
 
-<!-- Creation of map and data attachment above the "Small-area" level -->
-<script src="javascript/PPRMap/mouse_event.js"></script>
-<script src="javascript/PPRMap/basicMapSetup.js"></script>
-<script src="javascript/PPRMap/mapDraw.js"></script>
-<script src="javascript/PPRMap/projectionbounds.js"></script>
+    <!-- Parse data -->
+    <script src="javascript/PPRMap/dataparse.js"></script>
 
-<!-- Data for "Small-area" level -->
-<script src="data/dataPPRCSV_20150624.js"></script>
+    <!-- Creation of map and data attachment above the "Small-area" level -->
+    <script src="javascript/PPRMap/d3MapCreator.js"></script>
+    <script src="javascript/PPRMap/mapSetup.js"></script>
 
-<!-- Process and render "Small-area" data and render dashboard --> 
-<script async src="javascript/PPRMap/propertyinfo.js"></script>
-<script async src="javascript/PPRMap/dashboard.js"></script>
+    <!-- Render the dashboard --> 
+    <script src="javascript/PPRMap/dashboard.js"></script>
 
     </body>
 </html>
