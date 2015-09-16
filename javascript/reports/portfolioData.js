@@ -7,8 +7,7 @@ var payLoad=function(){
 									var temp = null;
 									$.ajax({
 										type: "GET",
-										url: "ReportsData.svc/JSON/portdata",
-										data: "{}",
+										url: "ReportsData/JSON/portdata",
 										async: false,
 										contentType: "application/json; charset=utf-8",
 										dataType: "json",

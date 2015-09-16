@@ -2,6 +2,7 @@
 <html>
 	<head>
         <title>GeoSales Map</title>
+        <link href="~/ptsb.ico" rel="shortcut icon" type="image/x-icon" />
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="css/GeoSales/pagestyle.css" />
@@ -12,7 +13,7 @@
 
 	<body>
 
-        <!-- Top set of buttons -->
+        <!-- Top set of buttons. Portfolio vairable -->
 	    <div class="container-fluid">
 	    	<div class="row-fluid">
 		    	<div class="full-width panel">
@@ -37,6 +38,7 @@
                 <!-- Histogram -->
 				<div class="col-sm-4 panel panel-default" id="chart">
 					<div class="panel-heading"> Measure  
+                        <!-- btn-group here is the collection of measure variable buttons -->
 						<div class="btn-group" id="measure"></div>
 						<div class="pull-right"><button type="button" class="btn btn-primary btn-xs" id="sort">Sort</button></div>	
 					</div>
@@ -75,6 +77,6 @@
 
         <script src="javascript/GeoSales/getData.js"></script>     
         <script src="javascript/GeoSales/Workhorse.js"></script>
-
+        <script src="javascript/GeoSales/loadMap.js"></script>
 	</body>
 </html>

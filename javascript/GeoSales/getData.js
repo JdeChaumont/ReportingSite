@@ -1,9 +1,9 @@
-﻿var dataAll = (function () {
+﻿//Request numerical data from server, then Geographic data.
+var dataAll = (function () {
     var temp = null;
     $.ajax({
         type: "GET",
-        url: "ReportsData.svc/JSON/geodata",
-        data: "{}",
+        url: "ReportsData/JSON/geodata",
         async: false,
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -18,8 +18,7 @@ var irl = (function () {
     var temp = null;
     $.ajax({
         type: "GET",
-        url: "ReportsData.svc/JSON/ShapeOfIreland",
-        data: "{}",
+        url: "ReportsData/JSON/ShapeOfIreland",
         async: false,
         contentType: "application/json; charset=utf-8",
         dataType: "json",

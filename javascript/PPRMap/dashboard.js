@@ -14,11 +14,9 @@
     var x = 0;
     function reduceByField(field) {
         return function (res, e, i, a) {
-            //console.log(e);
-            //console.log(res);
             if (e) {
                 var f = e["Location"][field]; //need to know structure
-                if ((++x % 10000) === 0) //console.log(f);
+                if ((++x % 10000) === 0) 
                 if (f) {
                     if (!res[f]) {
                         res[f] = [];
@@ -108,8 +106,6 @@
 }
 
 var propertySales = propertySalesData(dataPPR); //wrong data set
-//console.log(propertySales.stats(0, "02"));
-//console.log(propertySales.statsArray);
 
 var dataDims = ["Location.Cty",
         "Location.Admin_Cty",
@@ -128,19 +124,12 @@ function defaultResult() {
     };
 }
 
-//var pxf = jdcDataProvider({data : dataPPR.slice(0), dims : dataDims, indices : dataIndices, result : defaultResult });
-//console.log(dataPPR[0]);
-//var pxf = jdcDataProvider({data : dataPPR, dims : dataDims });
-
-
 var pprData = dFilterBase({
     data: dataPPR, dims: dataDims,
-    dimsToAdd: [ //these will be added to the dims to export
-        //{ 'derivedFrom' : 'Date', 'name' : 'Year', 'grpFn' : function(f){ return f.substr(0,4); } }
+    dimsToAdd: [ 
         { 'derivedFrom': 'Date', 'name': 'Year', 'grpFn': function (f) { return f.substr(0, 4); } }
     ],
 });
-//console.log(pprData);
 var pxf = dProvider({ src: [{ "id": "ppr", "data": pprData }] });
 
 var searchKey = {
@@ -155,9 +144,6 @@ var searchKey = {
     "Property.Bathrooms": "_",
     "mre": "Count"
 };
-
-var zzz = pxf.getPopulation({ "Location.ED": "16003" });
-//console.log(zzz);
 
 //*******************************************************************************
 //Step X - Create Dashboard Definitions
@@ -253,8 +239,7 @@ var state = {
 var rpts = {};
 var rpt = rpts[reportDef1.name] = rpts[reportDef1.ref] = jdcGrid({ source: pxf, def: reportDef1 });
 rpt.update();
-//state.addView(ret);
+
 function reportUpdate() {
     rpt.update();
 }
-//console.log(pxf);
