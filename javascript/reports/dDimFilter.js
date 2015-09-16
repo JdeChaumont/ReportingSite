@@ -314,9 +314,7 @@ var paletteSelector = function(palette,reverse){
             return palette[e]?palette[e]:palette[(reverse?palette.length-i:i)];
     }
 }
-palettes['d3Grads'] = d3.scale.category20c().range();
-palettes['grads'] = colorbrewer['RdBu'][11].slice(7,11).reverse().concat(palettes['d3Grads'].slice(4,7)).concat(colorbrewer['PRGn'][11].slice(7,11).reverse()).concat(colorbrewer['PRGn'][11].slice(0,4)).concat(colorbrewer['RdBu'][11].slice(0,4));
-palettes['d3Grads'] = d3.scale.category20c().range();
+
 function createMekkoColours(colours,source,range,index){
     return colours.map(function(e,i,a){
         return source[e][range][index];

@@ -9,8 +9,7 @@ var payLoad = function () {
         var temp = null;
         $.ajax({
             type: "GET",
-            url: "ReportsData.svc/JSON/dashboard",
-            data: "{}",
+            url: "ReportsData/JSON/dashboard",
             async: false,
             contentType: "application/json; charset=utf-8",
             dataType: "json",

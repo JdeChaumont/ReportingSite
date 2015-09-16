@@ -103,21 +103,8 @@ function loadReport(){
     //*******************************************************************************
     // Back to UI creation
     //*******************************************************************************
-    // 20150708 - New functionality to generate the report structures from js - needs to be done before report controls are created
-    dReport( { 'container' : '#rpt0', 'body' : { 'id' : 'rptDivision'}, 'title' : { 'html' : 'Group Profile' }, 'controls' : [ { 'class' : 'btn-group pull-right rptPage'} ] } );
-    dReport( { 'container' : '#rpt1', 'body' : { 'id' : 'rptArrears'}, 'title' : { 'html' : 'Arrears Profile' }, 'controls' : [ { 'class' : 'btn-group pull-right rptPage'} ] } );
-    dReport( { 'container' : '#rpt2', 'body' : { 'id' : 'rptFB'}, 'title' : { 'html' : 'Forbearance' }, 'controls' : [ { 'class' : 'btn-group pull-right rptPage'} ] } );
-    dReport( { 'container' : '#rpt3', 'body' : { 'id' : 'rptRate'}, 'title' : { 'html' : 'Rate\\Repayment Characteristics' }, 'controls' : [ { 'class' : 'btn-group pull-right rptPage'} ] } );
-    dReport( { 'container' : '#rpt4', 'body' : { 'id' : 'rptLoanSize'}, 'title' : { 'html' : 'Loan Size Profile' }, 'controls' : [ { 'class' : 'btn-group pull-right rptPage'} ] } );
-    dReport( { 'container' : '#rpt5', 'body' : { 'id' : 'rptLTV'}, 'title' : { 'html' : 'Indexed Loan To Value Profile' }, 'controls' : [ { 'class' : 'btn-group pull-right rptPage'} ] } );
-    dReport( { 'container' : '#rpt6', 'body' : { 'id' : 'rptGeo'}, 'title' : { 'html' : 'Geographic Distribution' }, 'controls' : [ { 'class' : 'btn-group pull-right rptPage'} ] } );
-    dReport( { 'container' : '#rpt7', 'body' : { 'id' : 'rptCounties'}, 'title' : { 'html' : 'Counties' }, 'controls' : [ { 'class' : 'btn-group pull-right rptPage'} ] } );
-    dReport( { 'container' : '#rpt8', 'body' : { 'id' : 'mekkoChart', 'style' : 'display:block;padding:0'}, 'controlsContainer' : { 'style' : 'padding:0;display:block;margin-left:30px;margin-right:auto' },'controls' : [ {'id':'mekkoV','class':"wrapper-dropdown-1"},{'id':'mekkoH','class':"wrapper-dropdown-1"} ] } );
-    // Hack - because cannot dynamically determine DOM type
-    d3.select('#mekkoChart').append('svg');
-
     var rptPortfolio = stateElement(state, "prt", css,["All","HL","BTL"],["_","b","a"],null,0,[0,2,1]);
-    var rptPeriod = stateElement(state, "rptPeriod", cssBtnSm,["2013","2014","Q1 2015"],[0,1,2],null,2);
+    var rptPeriod = stateElement(state, "rptPeriod", cssBtnSm,["2013","2014","Q1 2015","Q2 2015", "Q3 2015"],[0,1,2,3,4],null,4);
     var rptUOM = stateElement(state, "uom", cssBtnSm,["€", "#"],['bal','count']);
 
     //*******************************************************************************

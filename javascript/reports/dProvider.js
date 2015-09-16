@@ -258,10 +258,6 @@ function dProviderArray(options){
 		return res;
 	}
 
-	ret.dimsValues = function(src){
-		return ret.src[ret.srcId[src || '_']].dimsValues();
-	}
-
 	return ret.init(o);
 }
 

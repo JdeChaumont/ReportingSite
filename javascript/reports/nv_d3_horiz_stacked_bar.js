@@ -49,7 +49,7 @@ nv.models.multiBarHorizontalFilter = function() {
           container = d3.select(this);
 
       if (stacked) layoutStack(data, getY, getX);
-      console.log(data);
+      //console.log(data);
 
       //add series index to each data point for reference
       data = data.map(function(series, i) {
@@ -99,7 +99,7 @@ nv.models.multiBarHorizontalFilter = function() {
           .rangeBands(xRange || [0, availableHeight], .1);
 
       //y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + (stacked ? d.y0 : 0) }).concat(forceY)))
-      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return stacked ? d.y1 : d.y }).concat(forceY)))
+      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return stacked ? (d.y > 0 ? d.y1 + d.y : d.y1 ) : d.y }).concat(forceY)))
 
       if (showValues && !stacked)
         y.range(yRange || [(y.domain()[0] < 0 ? valuePadding : 0), availableWidth - (y.domain()[1] > 0 ? valuePadding : 0) ]);
@@ -246,11 +246,10 @@ nv.models.multiBarHorizontalFilter = function() {
             .text(function(d,i) { return d.display })
         bars.transition()
           .select('text')
-            //.attr('x', function(d,i) {  return y(d.y1) - y(d.y0) + Math.abs(y(getY(d,i) + d.y0) - y(d.y0))/2 })
-            .attr('x', function(d,i) {  return y(d.y/2) })
+            .attr('x', function(d,i) {  return y(d.y1) - y(d.y0) + Math.abs(y(getY(d,i) + d.y0) - y(d.y0))/2 })
         //20150119 must run after labels have been rendered
         bars.selectAll('text').style('opacity',function(d,i){
-            return this.getComputedTextLength()>Math.max(y(d.y),1) ? 0 : 1;
+            return this.getComputedTextLength()>Math.max(Math.abs(y(getY(d,i)) - y(0)),1) ? 0 : 1;
         });
       } else {
         bars.selectAll('text').text('');
@@ -277,11 +276,11 @@ nv.models.multiBarHorizontalFilter = function() {
       if (stacked)
         bars.transition()
             .attr('transform', function(d,i) {
-              return 'translate(' + y(d.y0) + ',' + x(getX(d,i)) + ')'
+              return 'translate(' + y(d.y1) + ',' + x(getX(d,i)) + ')'
             })
           .select('rect')
             .attr('width', function(d,i) {
-              return Math.abs(y(d.y))
+              return Math.abs(y(getY(d,i) + d.y0) - y(d.y0))
             })
             .attr('height', x.rangeBand() );
       else
