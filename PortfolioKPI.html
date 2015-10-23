@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Portfolio</title>
-		<link rel="stylesheet" type="text/css" href="css/libs/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/libs/miniboot.css" />
 		<link rel="stylesheet" type="text/css" href="css/libs/nv.d3.min.css" />
 		<link rel="stylesheet" type="text/css" href="css/libs/bootstrap-select.min.css" />
         <link rel="stylesheet" type="text/css" href="css/libs/bootstrap_btn_custom.min.css" />
@@ -23,7 +23,7 @@
     <!-- Banner -->
     <div id="top-banner" class="purple-header">
         <div class="purple-container" style:"margin:0">
-            <h1>Credit Portfolio Analytics</h1>
+            <h1>Credit Portfolio KPI Analytics</h1>
         </div>
     </div>
 
@@ -31,13 +31,13 @@
 	<div id='spin1' class="splash fabricLarge" style="background-color:transparent">
 		<div style="margin-top:10%;color:#00005f">
 			<div style="display:block;margin-left:auto;margin-right:auto;margin-top:auto;margin-bottom:auto">
-				<div class="col-sm-4">
+				<div class="col-4">
 					<div class="pull-right">
 						<div class="logo"></div>
 						<div class="inception" style="display:block;margin-top:40%;margin-left:25%"></div>
 					</div>
 				</div>
-				<div class="loadReport col-sm-8" style="height:100%;border-left:1px solid">
+				<div class="loadReport col-8" style="height:100%;border-left:1px solid">
 					<h1>Portfolio Characteristics</h1>
 					<div class="start_button_round" style="display:none"></div>
 				</div>
@@ -48,87 +48,99 @@
     <!-- Main report page -->
 	<div class="container page grid" style="height:100%;width:100%;background-color:transparent">
 
-		<div id="site-wrapper">
-			<div id="site-canvas">
-				<div id="site-menu">
-					<!-- Filter bars, initial div is a container -->
-					<div class="row-fluid col-sm-12" style="padding:0;height:1px">
-						<div class="row-fluid col-sm-12" style="padding:0;float:left">
-							<div class="row-fluid col-sm-12" style="padding:0">
-								<div class="btn btn-custom btn-sm pull-right expand">>></div>
-								<div class="btn btn-custom btn-sm pull-right expandV">More Filters</div>
-								<div class="btn btn-custom btn-sm reset">Reset</div>
-								<div class="btn-group uom"></div>
-								<!--<div class="btn-group rptPeriod"></div>!-->
-							</div>
-							<div class="row-fluid col-sm-12 slices" style="padding:0">
-								<div id="filterChart" style="padding:0">
-									<svg></svg>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+		<!--<div id="site-wrapper"  style="height:100%">
+			<div id="site-canvas"  style="height:100%">
+				<div id="site-menu"></div>!-->
 
 				<!-- Filter bars, initial div is a container -->
-				<div class="row-fluid col-sm-12" style="padding:4px">
-					<div id="hearts" style="display:inline-block; line-height:1;padding-top:0px">
+				<div class="row-fluid col-12" style="padding:4px">
+					<!--<div id="hearts" style="display:inline-block; line-height:1;padding-top:0px">
 						<a href="#" style="margin-top:0px" data-transition="ease"><span>☰</span></a>
-					</div>
-					<div class="btn-group pull-right uom" style="display:inline-block"></div>
-					<div class="pull-right dropdown-sm rptPeriod" style="display:inline-block;height:30px"></div>
-					<div class="btn-group pull-right rptRange" style="display:inline-block"></div>
+					</div>!-->
+					<div id="viewToggle" class="btn btn-custom">Switch View</div>
+					<div class="pull-right btn-group rptPeriod" style="display:inline-block"></div>
+					<div class="btn-group pull-right uom" style="display:inline-block;margin-right:2px"></div>
 					<div id="filter" style="padding:0;display:inline-block"></div>
 				</div>
-				<!-- Title -->
-				<div class="row-fluid col-sm-12" style="padding:0">
+
+				<div class="row-fluid col-12 panel">
+					<!-- Title -->
+					<div class="row-fluid col-12" style="padding:0">
+						<div class="pull-right btn-group prt"></div>
+						<!-- <div class="btn-group pull-right rptRange" style="display:inline-block"></div>-->
 						<div class="rptTitle indent" style="padding:0">Portfolio Analysis</div>
-				</div>
-				<!-- kpi stacks-->
-				<div class="row-fluid col-sm-12" style="padding:0;display:table">
-						<div id='kpiSelect' class='kpiSelect'>
-							<div class="row-fluid no-padding fill-color btn-group-vertical full-width rptDim" id="rptDim"></div>
+					</div>
+					<div class="kpiDashboard">
+						<div class="kpiRow no-padding">
+							<div class="kpiCell kpiTop">
+								<div class="kpiSelect" style="height:100%">
+										<div class="kpiRow">
+											<div class="kpiCell kpiTop btn-group-vertical rptRange"></div>
+										</div>
+										<div class="kpiRow kpiBottom">
+											<div class='kpiCell kpiBottom' id='kpiSelect'>
+												<div class="row-fluid no-padding btn-group-vertical rptDim" id="rptDim"></div>
+											</div>
+										</div>
+								</div>
+							</div>
+							<div id='kpiStack'></div>
 						</div>
-						<div id='kpiStack'></div>
+					</div>
 				</div>
 
-				</div><!-- site-canvas-->
-			</div><!-- site-wrapper -->
+				<!--</div>--><!-- site-canvas-->
+			<!--</div>--><!-- site-wrapper -->
 
-
-        <!-- Top set of buttons -->
-		<div class="row-fluid col-sm-12 no-padding" style="padding-top:5px;padding-bottom:5px">
-			<div class="pull-right btn-group prt"></div>
-			<div class="row-fluid" style="display:table">
-				<div class="row-fluid no-padding report"></div>
+		<div class="row-fluid col-12 hidden panel">
+			<!-- Top set of buttons -->
+			<div class="row-fluid col-12 no-padding" style="padding-top:5px;padding-bottom:5px">
 			</div>
-		</div>
-
-        <!-- Dashboard for data display -->
-		<div class="row-fluid col-sm-7" style="padding:0;float:right">
-			<div id="rptMove" class="col-sm-6 hidden"></div>
-			<div id="rpt" style="overflow:scroll">
-			<div id='spin2'>
-				<div id="rpt_" class="activeTab">
-					Your browser application has javascript disabled - This report requires javascript to be enabled
+			<!-- Filter bars, initial div is a container -->
+			<div class="row-fluid col-5" style="padding:0;height:1px">
+				<div class="row-fluid col-12" style="padding:0;float:left">
+					<div class="row-fluid col-12" style="padding:0">
+						<div class="btn btn-custom btn-sm pull-right expand">>></div>
+						<div class="btn btn-custom btn-sm pull-right expandV">More Filters</div>
+						<div class="btn btn-custom btn-sm reset">Reset</div>
+					</div>
+					<div class="row-fluid col-12 slices" style="padding:0">
+						<div id="filterChart" style="padding:0">
+							<svg></svg>
+						</div>
+					</div>
 				</div>
-                <!-- Each rpt corresponds to a report type, e.g. Group Overview, Forbearance. Their class is changed to Active type and display changed to
-                    block upon being selected by the dropdown. -->
-				<div id="rpt0" class="activeTab"></div>
-				<div id="rpt1" class="inActiveTab"></div>
-				<div id="rpt2" class="inActiveTab"></div>
-				<div id="rpt3" class="inActiveTab"></div>
-				<div id="rpt4" class="inActiveTab"></div>
-				<div id="rpt5" class="inActiveTab"></div>
-				<div id="rpt6" class="inActiveTab"></div>
-				<div id="rpt7" class="inActiveTab"></div>
-
-
 			</div>
-			<div id=output>
+
+	        <!-- Dashboard for data display -->
+			<div class="row-fluid col-7" style="padding-top:5px;padding-bottom:5px;float:right">
+				<div class="pull-right btn-group prt"></div>
+				<div class="row-fluid" style="display:table">
+					<div class="row-fluid no-padding report"></div>
+				</div>
+
+				<div id="rptMove" class="col-6 hidden"></div>
+				<div id="rpt" style="overflow:scroll">
+				<div id='spin2'>
+					<div id="rpt_" class="activeTab">
+						Your browser application has javascript disabled - This report requires javascript to be enabled
+					</div>
+	                <!-- Each rpt corresponds to a report type, e.g. Group Overview, Forbearance. Their class is changed to Active type and display changed to
+	                    block upon being selected by the dropdown. -->
+					<div id="rpt0" class="activeTab"></div>
+					<div id="rpt1" class="inActiveTab"></div>
+					<div id="rpt2" class="inActiveTab"></div>
+					<div id="rpt3" class="inActiveTab"></div>
+					<div id="rpt4" class="inActiveTab"></div>
+					<div id="rpt5" class="inActiveTab"></div>
+					<div id="rpt6" class="inActiveTab"></div>
+					<div id="rpt7" class="inActiveTab"></div>
+				</div>
+				<div id=output>
+				</div>
+			    </div><!-- /example -->
+				<div class="logo" style="position:fixed;bottom:0;right:70px"></div>
 			</div>
-		    </div><!-- /example -->
-			<div class="logo" style="position:fixed;bottom:0;right:70px"></div>
 		</div>
 
         <!-- Pop-up charts -->
@@ -140,9 +152,9 @@
 		        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
 		      </div>
 		      <div class="modal-body" id="popupChartBS">
-		        <div class="row-fluid col-sm-10"><svg width="100%" height="445"></svg></div>
-		        <div class="row-fluid col-sm-1 no-padding fill-color btn-group-vertical full-width" id="popupSlice"></div>
-				<div class="row-fluid col-sm-1 no-padding fill-color btn-group-vertical full-width" id="popupSliceA"></div>
+		        <div class="row-fluid col-10"><svg width="100%" height="445"></svg></div>
+		        <div class="row-fluid col-1 no-padding fill-color btn-group-vertical full-width" id="popupSlice"></div>
+				<div class="row-fluid col-1 no-padding fill-color btn-group-vertical full-width" id="popupSliceA"></div>
 		      </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -179,15 +191,16 @@
         <!-- Filter, State tracker and utility functions -->
 		<script src="./javascript/reports/dUtils.js"></script>
 		<script src="./javascript/reports/dState.js"></script>
-		<script src="./javascript/reports/dFilter.js"></script>
+		<script src="./javascript/reports/dFilterKPI.js"></script>
 		<script src="./javascript/reports/dProvider.js"></script>
-		<script src="./javascript/reports/dGrid.js"></script>
+		<script src="./javascript/reports/dGridKPI.js"></script>
 		<script src="./javascript/reports/dDataShape.js"></script>
-		<script src="./javascript/reports/dDimFilter.js"></script>
+		<script src="./javascript/reports/dDimFilterKPI.js"></script>
 		<script src="./javascript/reports/dDimMekko.js"></script>
 		<script src="./javascript/reports/dReport.js"></script>
 		<script src="./javascript/reports/dKPI.js"></script>
 		<script src="./javascript/reports/dDimFilterDropdown.js"></script>
+		<script src="./javascript/reports/dSelect.js"></script>
 
         <!-- Portfolio UI set up -->
 		<script src="./javascript/reports/spinner.js"></script>
@@ -228,8 +241,13 @@
 			    return false;
 
 			  });
-
 			});
+
+			$('#viewToggle').click(function() {
+				$('.panel').toggleClass('hidden');
+				$(window).trigger('resize'); // this could be more nuanced
+			});
+
 		</script>
 
 	</body>

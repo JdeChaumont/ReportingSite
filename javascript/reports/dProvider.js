@@ -13,8 +13,9 @@ function dProvider(options){
 	}
 	//Function variables
 	var ret = { cache : {}, calc : {}, srcId : { '_' : 0 }, src : [], options : {} };
-	var cache = ret.cache, calc = ret.calc, srcId = ret.srcId, src = ret.src, o = ret.options, filters = { 'active' : {} };
-	o = extend(def,options); // merge defaults and options
+	ret.active = ret.cache;
+	var calc = ret.calc, srcId = ret.srcId, src = ret.src, filters = { 'active' : {} };
+	var o = ret.options= extend(def,options); // merge defaults and options
 	// Initialisation member
 	ret.init = function(options){
 		ret.dims={};
@@ -31,7 +32,9 @@ function dProvider(options){
 			srcId[e["id"]||i] = i;
 		});
 		// option to kick start cache
-		if(o.cache){ cache = o.cache; }
+		if(o.cache){ ret.cache = o.cache; }
+		// create default dim array
+		o["dimsDefault"] = o.dims.map(function(e,i,a){ return o.all; });
 		// return function
 		return ret;
 	}
@@ -45,22 +48,22 @@ function dProvider(options){
 	// New function to set cache to active filter
 	ret.activeCache = function(source){
 		if(source.filtered()===true){
-			var id = ret.idString(source['filter']['selected']);
+			var id = ret.idString(source['filter']['selected']); //if(print===true) console.log(id);
 			if(!ret.cache[id]){
 				ret.cache[id] = {};
 			}
-			cache = ret.cache[id];
+			ret.active = ret.cache[id];
 		} else {
-			cache = ret.cache;
+			ret.active = ret.cache;
 		}
 	}
 	// Function to support activeCache
 	ret.idString = function(key){
-		var d = [];
+		var d = o["dimsDefault"] .slice(0);
 		if(!key['src']) { key['src'] = '_'; } // key has to have a src dim
-		for(var i=0;i<o.dims.length;i++){
+		/*for(var i=0;i<o.dims.length;i++){
 			d.push(o.all);
-		}
+		}*/
 		for(var k in key){ // would extend be better? - check k is in result
 			if(ret.dims[k]){
 				var v =  f(key[k]); // use f to resolve function here - need to make this generic - should I use extend?
@@ -77,11 +80,11 @@ function dProvider(options){
 	// include an id string in format <dimval1>|<dimval2>|... and
 	// include filter which is minimum number of fields i.e. have a selection
 	ret.extKey = function(key){ // new to address subFilter
-		var d = [], filter = {}, subFilter = {};
+		var d = o["dimsDefault"].slice(0), filter = {}, subFilter = {};
 		if(!key['src']) { key['src'] = '_'; } // key has to have a src dim
-		for(var i=0;i<o.dims.length;i++){
+		/*for(var i=0;i<o.dims.length;i++){ // could perform at initiation and use slice function
 			d.push(o.all);
-		}
+		}*/
 		for(var k in key){ // would extend be better? - check k is in result
 			if(ret.dims[k]){ // key is in dimensions registered for provider
 				var v =  f(key[k]); // use f to resolve function here - need to make this generic - should I use extend?
@@ -105,7 +108,11 @@ function dProvider(options){
 			}
 			d = d.concat(s); // Extend subFilter id to main id - SHOULD THIS BE d = s.concat(d)?
 		}
-		// Encode filters - new finctionality not yet implemented
+		// New flag to switch between all and filtered view on source - default is filtered
+		if(key['all']){
+			return { "obj" : key, "id" : d.join("|"), "filter" :  filter, "subFilter" : subFilter, "all" : true }; //full key and idString returned
+		}
+		// Encode filters - new functionality not yet implemented - keep encoding out of dProvider
 		/*if(src[key[src]].encoded()){
 			src[key[src]].encodeFilter();
 		}*/
@@ -119,7 +126,7 @@ function dProvider(options){
 		} else {
 			console.log("updated cache with key: " + key["id"]);
 		}*/
-		return cache[key["id"]] ? cache[key["id"]] : ret.fillCache(key);
+		return ret.active[key["id"]] ? ret.active[key["id"]] : ret.fillCache(key);
 	}
 	// Fill cache by accessing source objects
 	ret.fillCache = function(key){  //should be a private function
@@ -144,18 +151,18 @@ function dProvider(options){
 		//if(typeof(result)==='object'){
 		//	return ret.fillCacheFromObject(id,key,result);
 		//}
-		return cache[id] = result;
+		return ret.active[id] = result;
 	}
 	// Enumerate result to update cache
 	ret.fillCacheFromObject = function(id,key,result){
 		for(var mre in result){
 			if(has(result,mre)){
 				var idString = replaceMreInId(id,mre);
-				cache[idString] = result[mre];
+				ret.active[idString] = result[mre];
 				// cache[replaceMreInId(id,mre)] = result[mre];
 			}
 		}
-		return cache[id];
+		return ret.active[id];
 	}
 	// Replace measure dimension in cache id string
 	function replaceMreInId(id,mre){
@@ -214,7 +221,8 @@ function dProviderArray(options){
 	// Preliminary items - defaults - call base function
 	var def = {}
 	var ret = dProvider(extend(def,options));  //inital set up from dFilterBase
-	var cache = ret.cache, calc = ret.calc, srcId = ret.srcId, src = ret.src, o = ret.options;
+	var calc = ret.calc, srcId = ret.srcId, src = ret.src;
+	var o = ret.options;
 
 	ret.init = function(options){
 		// Extend defaults
@@ -222,9 +230,10 @@ function dProviderArray(options){
 	}
 	// Principal access point - overwritten
 	ret.segment = function(key,range){ //range can be single value or array with 2 values - index and offset
-		var k = ret.extKey(key); //returns { obj : fullKey, id : idString, filter : minKey }
-		ret.activeCache(src[srcId[k["obj"]["src"]]]);
-		var res = ret.segmentFromCache(k);
+		var k = ret.extKey(key); //returns { obj : fullKey, id : idString, filter : minKey, subFilter : subFilter }
+		//if(k['id']==="_|_|_|_|_|bal|b|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_"){ print=true; } if(print===true) { console.log(k['id']); }
+		ret.activeCache(src[srcId[k["obj"]["src"]]]); //console.log(ret.cache); console.log(ret.active);
+		var res = ret.segmentFromCache(k); //if(print===true) { console.log(res); } print=false;
 		var r = range;
 		var r0, r1;
 		if(r){
@@ -254,9 +263,28 @@ function dProviderArray(options){
 					return { x: pouDisplay(i,"shortmonths") , y:d }
 					})
 			});
-		});
+		}); //console.log(res);
 		return res;
 	}
+
+	ret.dimsValues = function(src){
+		return ret.src[ret.srcId[src || '_']].dimsValues();
+	}
+
+	ret.groupBy = function(dim,mre,src){
+		return ret.src[ret.srcId[src || '_']].groupBy(dim,[mre]).map(function(e,i,a){
+			return {
+				key: displayNames[dim] ? displayNames[dim][e[dim]] || e[dim] : e[dim],
+				values: e['values'][mre].map(function(f,j,b){
+					return { x: pouDisplay(i,"shortmonths") , y:f }
+					})
+				}
+			});
+	}
+
+	/*ret.groupBy = function(dim,mre,src){
+		return ret.src[ret.srcId[src || '_']].groupBy(dim,mre);
+	}*/
 
 	return ret.init(o);
 }

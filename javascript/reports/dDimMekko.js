@@ -25,8 +25,6 @@ function dDimMekko(options){ // wraps customised nvd3 horizontal bar chart
     ret.dims = {};
 
     ret.init = function(options){
-        // Process dims
-        orderDims();
         var data = o.source.filter['aggregate']; //console.log(data);
         o.dims.forEach(function(e,i,a){
             ret.dims[e['name']] = i; // from dFilter but not using "val"
@@ -68,21 +66,6 @@ function dDimMekko(options){ // wraps customised nvd3 horizontal bar chart
         return ret;
     }
 
-    function orderDims(){ // add an object to sort
-        var k,d,v;
-        o.dims.forEach(function(e,i,a){
-            if(e['order']){ //order supplied?
-                if(typeof e['order']!=="string"){ // ordered array
-                    e['dimOrder'] = {};
-                    e['order'].forEach(function(f,j,k){
-                        v =  encode(e['name'],f);
-                        e['dimOrder'][v] = j;
-                    });
-                }
-            }
-        });
-    }
-
     function reshapeToNestedArrays(data){
         var res = [], node, tree = {}, d;
         for(var e, i=0, a=data, n=a.length; i<n; i+=1){ e = a[i]; // e is object
@@ -107,7 +90,7 @@ function dDimMekko(options){ // wraps customised nvd3 horizontal bar chart
         var ord = e['dimOrder'];
         for(var d in data){
             var l = level;
-            var s = { 'key' : dim,  'label' : d, 'display' : decode(dim,d), 'index' : e['range'][d] , 'value' : data[d]['value'] || 0 };
+            var s = { 'key' : dim,  'label' : d, 'display' : o.dims.decode(dim,d), 'index' : e['range'][d] , 'value' : data[d]['value'] || 0 };
             if(!data[d]['values']) { s['values'] = data[d]['values'] || orderData(data[d],++l); }
             if(ord&&ord[d]>=0){ // 0 was being evaluated as not found
                 ordered[ord[d]] = s;
@@ -122,14 +105,6 @@ function dDimMekko(options){ // wraps customised nvd3 horizontal bar chart
             }
         }
         return res;
-    }
-
-    function decode(dim,val){
-        return (o.dimsEncoded&&o.dimsEncoded[dim]) ? o.dimsEncoded[dim]['encoded'][val]||val : val;
-    }
-
-    function encode(dim,val){
-        return (o.dimsEncoded&&o.dimsEncoded[dim]) ? o.dimsEncoded[dim]['values'][val]||val : val;
     }
 
     function reshapeFilterData(data){
