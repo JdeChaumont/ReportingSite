@@ -3,11 +3,10 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="~/ptsb.ico" rel="shortcut icon" type="image/x-icon" />
 		<title>RoI Residential Mortgage Portfolio</title>
 		<link rel="stylesheet" type="text/css" href="css/libs/miniboot.css" />
-        <link rel="stylesheet" type="text/css" href="css/libs/nv.d3.min.css" />
-        <link rel="stylesheet" type="text/css" href="css/libs/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/libs/nv.d3.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/libs/bootstrap-select.min.css" />
         <link rel="stylesheet" type="text/css" href="css/libs/bootstrap_btn_custom.min.css" />
         <link rel="stylesheet" type="text/css" href="css/libs/banner.css" />
 		<link rel="stylesheet" type="text/css" href="css/reports/sparkbar.min.css" />
@@ -15,8 +14,8 @@
 		<link rel="stylesheet" type="text/css" href="css/reports/ptsb.css" />
 		<link rel="stylesheet" type="text/css" href="css/reports/dropdown.css" />
 		<link rel="stylesheet" type="text/css" href="css/reports/portfolio.css" />
+		<link rel="stylesheet" type="text/css" href="css/reports/kpi.css" />
 	</head>
-
 	<body>
 
     <!-- Banner -->
@@ -84,115 +83,15 @@
 
                 <!-- Each rpt corresponds to a report type, e.g. Group Overview, Forbearance. Their class is changed to Active type and display changed to
                     block upon being selected by the dropdown. -->
-				<div id="rpt0" class="activeTab">
-					<div class="fullspan rptControls">
-							<div class="btn-group pull-right rptPage"></div>
-					</div>
-					<div class="row-fluid" style="padding:5px">
-						<div class="rptTitle indent">Group Profile</div>
-						<div class="full-width rptTitleBorder"></div>
-					</div>
-					<div class="rptBody indent" id="rptDivision"></div>
-					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
-					<div class="rptFooter indent"></div>
-				</div>
-				<div id="rpt1" class="inActiveTab">
-					<div class="fullspan rptControls">
-							<div class="btn-group pull-right rptPage"></div>
-					</div>
-					<div class="row-fluid" style="padding:5px">
-						<div class="rptTitle indent">Arrears Profile</div>
-						<div class="full-width rptTitleBorder"></div>
-					</div>
-					<div class="rptBody indent" id="rptArrears"></div>
-					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
-					<div class="rptFooter indent"></div>
-				</div>
-				<div id="rpt2" class="inActiveTab">
-					<div class="fullspan rptControls">
-							<div class="btn-group pull-right rptPage"></div>
-					</div>
-					<div class="row-fluid" style="padding:5px">
-						<div class="rptTitle indent">Forbearance</div>
-						<div class="full-width rptTitleBorder"></div>
-					</div>
-					<div class="rptBody indent" id="rptFB"></div>
-					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
-					<div class="rptFooter indent"></div>
-				</div>
-				<div id="rpt3" class="inActiveTab">
-					<div class="fullspan rptControls">
-							<div class="btn-group pull-right rptPage"></div>
-					</div>
-					<div class="row-fluid" style="padding:5px">
-						<div class="rptTitle indent">Rate\Repayment Characteristics</div>
-						<div class="full-width rptTitleBorder"></div>
-					</div>
-					<div class="rptBody indent" id="rptRate"></div>
-					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
-					<div class="rptFooter indent"></div>
-				</div>
-				<div id="rpt4" class="inActiveTab">
-					<div class="fullspan rptControls">
-							<div class="btn-group pull-right rptPage"></div>
-					</div>
-					<div class="row-fluid" style="padding:5px">
-						<div class="rptTitle indent">Loan Size Profile</div>
-						<div class="full-width rptTitleBorder"></div>
-					</div>
-					<div class="rptBody indent" id="rptLoanSize"></div>
-					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
-					<div class="rptFooter indent"></div>
-				</div>
-				<div id="rpt5" class="inActiveTab">
-					<div class="fullspan rptControls">
-							<div class="btn-group pull-right rptPage"></div>
-					</div>
-					<div class="row-fluid" style="padding:5px">
-						<div class="rptTitle indent">Indexed Loan To Value Profile</div>
-						<div class="full-width rptTitleBorder"></div>
-					</div>
-					<div class="rptBody indent" id="rptLTV"></div>
-					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
-					<div class="rptFooter indent"></div>
-				</div>
-				<div id="rpt6" class="inActiveTab">
-					<div class="fullspan rptControls">
-							<div class="btn-group pull-right rptPage"></div>
-					</div>
-					<div class="row-fluid" style="padding:5px">
-						<div class="rptTitle indent">Geographic Distribution</div>
-						<div class="full-width rptTitleBorder"></div>
-					</div>
-					<div class="rptBody indent" id="rptGeo"></div>
-					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
-					<div class="rptFooter indent"></div>
-				</div>
-				<div id="rpt7" class="inActiveTab">
-					<div class="fullspan rptControls">
-							<div class="btn-group pull-right rptPage"></div>
-					</div>
-					<div class="row-fluid" style="padding:5px">
-						<div class="rptTitle indent">Counties</div>
-						<div class="full-width rptTitleBorder"></div>
-					</div>
-					<div class="rptBody indent" id="rptCounties"></div>
-					<div class="rptCommentary indent">Additional commentary is placed at this point</div>
-					<div class="rptFooter indent"></div>
-				</div>
-				<div id="rpt8" class="inActiveTab">
-					<div class="fullspan no-padding" style="padding:0">
-						<div class="fullspan" style="padding:0">
-							<div class="row-fluid" style="padding:0;display:block;margin-left:30px;margin-right:auto">
-								<div id="mekkoV" class="wrapper-dropdown-1" tabindex="1"></div>
-								<div id='mekkoH' class="wrapper-dropdown-1"></div>
-							</div>
-							<div id="mekkoChart" style="display:block;padding:0">
-								<svg></svg>
-							</div>
-						</div>
-					</div>
-				</div>
+				<div id="rpt0" class="activeTab"></div>
+				<div id="rpt1" class="inActiveTab"></div>
+				<div id="rpt2" class="inActiveTab"></div>
+				<div id="rpt3" class="inActiveTab"></div>
+				<div id="rpt4" class="inActiveTab"></div>
+				<div id="rpt5" class="inActiveTab"></div>
+				<div id="rpt6" class="inActiveTab"></div>
+				<div id="rpt7" class="inActiveTab"></div>
+				<div id="rpt8" class="inActiveTab"></div>
 
 			</div>
 
@@ -234,9 +133,12 @@
 		<script src="./javascript/libs/stackblur.js"></script>
 		<script src="./javascript/libs/d3.v3.min.js"></script>
 		<script src="./javascript/libs/colorbrewer.v1.min.js"></script>
-		<script src="./javascript/libs/nv.d3.js"></script>
+		<script src="./javascript/libs/nv.d3.min.js"></script>
 		<script src="./javascript/libs/spin.min.js"></script>
 		<script src="./javascript/libs/pako.min.js"></script>
+
+		<!-- Extensions javascript objects -->
+		<script src="./javascript/reports/jsExtend.js"></script>
 
         <!-- Extensions of libraries -->
 		<script src="./javascript/reports/nv_d3_horiz_stacked_bar.js"></script>
@@ -252,6 +154,8 @@
 		<script src="./javascript/reports/dDataShape.js"></script>
 		<script src="./javascript/reports/dDimFilter.js"></script>
 		<script src="./javascript/reports/dDimMekko.js"></script>
+		<script src="./javascript/reports/dReport.js"></script>
+		<script src="./javascript/reports/dSelect.js"></script>
 
         <!-- Portfolio UI set up -->
 		<script src="./javascript/reports/spinner.js"></script>
@@ -261,14 +165,13 @@
 
         <!-- Contains metadata for JSON and makes AJAX request for JSON -->
 		<script src="./javascript/reports/mortgageData.js"></script>
-		<!--script src="./javascript/reports/mortgageData.js"></script!-->
+		<!--script src="./data/mortgageData.js"></script!-->
 
 		<script>
-		    //eval(pako.inflate(window.atob(payLoadData), { to: 'string' }));
+			//eval(pako.inflate(window.atob(payLoadData), { to: 'string' }));
 			$(".start_button_round").css("display","block");
 			window.onload = setTimeout(loadReport,500);
 		</script>
 
 	</body>
-
 </html>

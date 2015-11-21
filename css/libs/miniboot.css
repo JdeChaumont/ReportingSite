@@ -216,7 +216,7 @@ width: 8.33333333%;
 .btn-group > .btn,
 .btn-group-vertical > .btn {
   position: relative;
-  float: left;
+  float: none;
 }
 
 .btn-group-vertical > .btn:not(:first-child):not(:last-child) {
@@ -705,7 +705,7 @@ table {
 .btn-group > .btn,
 .btn-group-vertical > .btn {
   position: relative;
-  float: left;
+  float: none;
 }
 .btn-group > .btn:hover,
 .btn-group-vertical > .btn:hover,

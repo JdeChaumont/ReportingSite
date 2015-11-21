@@ -17,8 +17,8 @@ function layoutStack(data, getY, getX){
         for(var e, i=0, a=data, n=data.length; i<n; i+=1){ e = a[i]; // bring into line with functional convention
             if(!e.x){ e.x = x(e) || ( series || 0); } //create x if not already present - may not be a number
             if(!e.y){ e.y = y(e); } //create y if not already present
-            e.y0 = (i>0 ? a[i-1].y + a[i-1].y0 : 0);
-            e.y1 = (i>0 ? a[i-1].y + a[i-1].y1 : 0);
+            e.y0 = (i>0 ? a[i-1].y1 : 0);
+            e.y1 = (i>0 ? e.y0 + e.y : e.y);
             sum+=e.y;
         }
         return sum;
@@ -56,4 +56,19 @@ function layoutMekko(data, getVal,sort){
     }
     //return (data = res);
     return res;
+}
+
+function layoutStackSeries(data, getY, getX,sort){
+    var y = getY || function(d){ return d.y; }, x = getX || function(d){ return d.x; }, sum = 0;
+    if(sort){
+        data.sort(function(d1,d2){ var a = d1['values'].last(), b =  d2['values'].last(); return sort==='desc' ? y(b) - y(a) : y(a) - y(b); })
+    }
+    for(var point, pt=0, series=data[0]['values'], points=series.length; pt<points; pt+=1){ point = series[pt]; // bring into line with functional convention
+      for(var e, i=0, a=data, n=a.length; i<n; i+=1){ e = a[i]['values'][pt]; // bring into line with functional convention
+          if(!e.x){ e.x = x(e) || ( series || 0); } //create x if not already present - may not be a number
+          if(!e.y){ e.y = y(e); } //create y if not already present
+          e.y0 = (i>0 ? a[i-1]['values'][pt].y1 : 0);
+          e.y1 = (i>0 ? e.y0 + e.y : e.y);
+      }
+    }
 }

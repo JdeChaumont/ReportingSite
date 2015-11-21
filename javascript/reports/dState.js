@@ -23,7 +23,7 @@ function stateManager(anchorManager,dataSource){
 				return -1;
 			}
 			var refNo = (state.controls.push(defaultValue||0)-1);
-			state[id]=accessor(state,refNo,values);
+			state[id]=accessor(state,refNo,values); // console.log(id); console.log(state[id]());
 			if(eventHandler){state.stateHandlers.push(eventHandler(state,id,refNo));}
 			state.anchorMgr.addAnchorMapSchema(id,schema);
 			return refNo;
@@ -33,8 +33,8 @@ function stateManager(anchorManager,dataSource){
 		},
 		stateHandlers : [],
 		updated : 0,
-		updateStateControls : function(){
-			for(var i=0;i<state.stateHandlers.length;i++){
+		updateStateControls : function(){ //console.log(state.stateHandlers);
+			for(var i=0;i<state.stateHandlers.length;i++){ // console.log(i); console.log(state.stateHandlers[i]);
 				state.stateHandlers[i]();
 			}
 		},
@@ -84,7 +84,7 @@ var anchorManager = function(){
 		return i;
 	}
 
-	ret.changeAnchorPart = function( argMap ) { console.log(argMap);
+	ret.changeAnchorPart = function( argMap ) { // console.log(argMap);
 		spinner.spin(); setTimeout(function(){spinner.stop();},1000); // spinner with 1 sec timer - would prefer not to have here
 		var anchorMapRevise = copyAnchorMap(), result = true, k, k_dep;
 		// Begin merge changes into anchor map
@@ -191,24 +191,30 @@ var createButtonSet = function(container,btns,css,events){
 		.on("click",events.click);
 }			//Config - Button to data field mapping
 
-var createDropdown = function(container,states,css,events){
+var createDropdown = function(container,states,css,events,defaultValue,style){
 	var dropdown = d3.selectAll(container)
 		.append('select')
 		.attr("class", 'selectpicker')
-		.attr("style","font-style:italic");
+		.attr("style","font-style:italic")
+		//.attr("data-title",states[defaultValue]['name'])
+		;
 	var btns = d3.selectAll(container).selectAll('select').selectAll('option')
 		.data(states)
 	.enter().append('option')
 		.attr("value", ƒ("value"))
-		.html(ƒ("name"));
+		.html(ƒ("name"))
+		//.attr("selected",function(d){ return d["value"]===defaultValue});
 	// Unable to get D3 to work
 	dropdown = $(container+' .selectpicker');
 	dropdown.selectpicker();
 	dropdown.on("change",events.change);
 	// Styling
 	dropdown = d3.selectAll(container+' .selectpicker');
-	//dropdown.attr("style","font-size:12pt");
 	dropdown.classed(css,true);
+	if(style) {
+		dropdown = d3.selectAll(container).selectAll('button')
+			.attr("style",style);
+	}
 	dropdown = d3.selectAll(container).selectAll('select')
 		.attr("style","display:none");
 }
@@ -284,7 +290,7 @@ function reportChange(id){
 //member no longer used - array of controls now used driven by refNo - refNo could be derived and returned
 //index value added to override value returned to allow alignment with other controls with values in different order - potentially brittle
 function stateElement(stateObj,id,css,states,map,handlers,defaultValue,index){ //code should be segmented
-	var values = {}, schema = {}, buttons = [], s = stateObj || state, h = "stateHandlers", refNo;
+	var values = {}, schema = {}, buttons = [], s = stateObj || state, refNo;
 
 	buttons = states.map(function(e,i,a){
 		var ndx = i;
@@ -308,8 +314,8 @@ function stateElement(stateObj,id,css,states,map,handlers,defaultValue,index){ /
 //returns an associative array of values
 //btns.id drives hook up with Anchor management and state
 //member no longer used - array of controls now used driven by refNo - refNo could be derived and returned
-function stateElementDropdown(stateObj,id,css,states,map,handlers,defaultValue){ //code should be segmented
-	var values = {}, schema = {}, buttons = [], s = stateObj || state, h = "stateHandlers", refNo;
+function stateElementDropdown(stateObj,id,css,states,map,handlers,defaultValue,style){ //code should be segmented
+	var values = {}, schema = {}, buttons = [], s = stateObj || state, refNo;
 
 	buttons = states.map(function(e,i,a){
 		values[i] = map ? map[i] : e;
@@ -317,9 +323,7 @@ function stateElementDropdown(stateObj,id,css,states,map,handlers,defaultValue){
 		return { name : e , value : i };
 	});
 
-	//createButtonSet('.'+id,buttons,css,{ click : stateBtnHandler(id,stateObj.anchorMgr) });
-	createDropdown('.'+id,buttons,css,{ change : stateBtnHandler(id,stateObj.anchorMgr) });
-	//createDropdown('.'+id,buttons,css,{ click : function(){alert(this.value);} });
+	createDropdown('.'+id,buttons,css,{ change : stateBtnHandler(id,stateObj.anchorMgr) },defaultValue||0,style);
 
 	refNo  = s.addControl(id,values,schema,stateProperty,null,defaultValue||0)
 

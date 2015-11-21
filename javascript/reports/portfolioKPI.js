@@ -1,4 +1,6 @@
 //*******************************************************************************
+var print=false;
+//*******************************************************************************
 // Configuration requirements
 //*******************************************************************************
 var targetDef = document.getElementById('spin2');
@@ -19,6 +21,7 @@ var numPeriods = periods.mth.length;
 //*******************************************************************************
 //Step 4 - Create Dashboard - moved from jdcGrid
 //*******************************************************************************
+var iter = 0;
 //Defaults for report defnition - Helper function for accessing state properties
 function reportDefaults(current,YTDMths){
     var ret = {};
@@ -31,7 +34,9 @@ function reportDefaults(current,YTDMths){
     ret.l = function(){return current-1;};
     ret.ly = function(){return current-12;};
     ret.ytd = function(){return YTDMths;};
-
+    ret.dimSelected = function(){ //if(++iter>4) return 'dpd'; return 'prt'};
+        return state.rptDim()};
+    ret.s = function(){return (state.rptRange() > 0 ? 0 : ret.c() );};
     return ret;
 }
 var def = reportDefaults(numPeriods-1,0);
@@ -69,9 +74,9 @@ function loadReport(){
 
     $(".splash").slideUp('slow');
 
-    dataNew = payLoad(); // console.log(dataNew);
-    //console.log(dataNew);
-    //console.log(dataNew.data[0]);
+    dataNew = payLoad();
+    console.log(dataNew);
+    console.log(dataNew.data[0]);
 
     //*******************************************************************************
     // Create User Interface
@@ -114,33 +119,54 @@ function loadReport(){
     dReport( { 'container' : '#rpt7', 'body' : { 'id' : 'mekkoChart', 'style' : 'display:block;padding:0'}, 'controlsContainer' : { 'style' : 'padding:0;display:block;margin-left:30px;margin-right:auto' },'controls' : [ {'id':'mekkoV','class':"wrapper-dropdown-1"},{'id':'mekkoH','class':"wrapper-dropdown-1"} ] } );
     // Hack - because cannot dynamically determine DOM type
     d3.select('#mekkoChart').append('svg');
-
-    var rptPortfolio = stateElement(state, "prt", css,["All","HL","BTL","Commercial","CHL","IoM","Consumer"],["_","d","a","c","b","e","f"],null,0,[0,4,1,3,2,5,6]);
-    var rptPeriod = stateElementFwdBck(state, "rptPeriod", css,["2013","2014","Q1 2015","Q2 2015","Q3 2015"],[0,1,2,3,4],null,4);
-    var rptUOM = stateElement(state, "uom", cssBtnSm,["€", "#"],['bal','count']);
+    var rptPortfolio = stateElement(state, "prt", css,["All","HL","BTL","Commercial","CHL","IoM","Consumer"],["_","d","a","c","b","e","f"],null,0,[0,4,1,3,2,5,6],true);
+    //var rptPeriod = stateElement(state, "rptPeriod", cssBtnSm,["Q413","Q114","Q214","Q314","Q414","Q115","Q215"],[0,1,2,3,4,5,6],null,6);
+    //var rptPeriod = stateElementDropdown(state, "rptPeriod", "dropdown-style",["Q4 2013","Q1 2014","Q2 2014","Q3 2014","Q4 2014","Q1 2015","Q2 2015"].reverse(),[0,1,2,3,4,5,6].reverse(),null,0);//,"font-size:10pt;padding-top:5px;height:30px");
+    //var rptPeriod = stateElement(state, "rptPeriod", css,["Q4 13","Q1 14","Q2 14","Q3 14","Q4 14","Q1 15","Q2 15"].reverse(),[0,1,2,3,4,5,6].reverse(),null,0);//,"font-size:10pt;padding-top:5px;height:30px");
+    //var rptPeriod = stateElementFwdBck(state, "rptPeriod", css,["Q4 13","Q1 14","Q2 14","Q3 14","Q4 14","Q1 15","Q2 15"],[0,1,2,3,4,5,6],null,6);//,"font-size:10pt;padding-top:5px;height:30px");
+    var rptPeriod = stateElementFwdBck(state, "rptPeriod", css,["Q4 2013","Q1 2014","Q2 2014","Q3 2014","Q4 2014","Q1 2015","Q2 2015"],[0,1,2,3,4,5,6],null,6);//,"font-size:10pt;padding-top:5px;height:30px");
+    //var rptUOM = stateElement(state, "uom", css,["€", "#","Prv"],['bal','count','prv']);
+    var rptUOM = stateElementFwdBck(state, "uom", css,["€", "#","Prv"],['bal','count','prv'],null,0,null,true);
+    var rptDim = stateElement(state, "rptDim", css,["Portfolio","Division","Region","Arrears","Repayment","Rate Type","LTV","Forborne"],["prt","ent","region","dpd_band","repay_type","int_rate_type","ltv_band","fb"],null,0,[0,1,2,3,4,5,6,7]);
+    var rptRange = stateElement(state, "rptRange", css,["Current","All Periods"],[0,1]);
 
     //*******************************************************************************
     // Set-up Data
     //*******************************************************************************
     dataDims = dataNew['dims'];
     dataDims = ['mre'].concat(dataDims); // Hack to add here - could check for tgt in dProvider and add there
-    dimsEncoded = dataNew['dimsEncoded'];
+    dimsEncoded = dataNew['dimsEncoded']; //console.log(dimsEncoded);
     console.log(JSON.stringify(dimsEncoded));
 
-    // 20151017 New section based on changes from PortfoliKPI
     addDimOrder(filterDims,dimsEncoded); // doing this here removes the need to order in dDimFilter...
     filterDims['encode'] = encodeDecode(dimsEncoded,'values');
     filterDims['decode'] = encodeDecode(dimsEncoded,'encoded');
 
-    //var dpdMap = { "g":"UTD", "a":">0", "c":">30", "e":">30" };  // VERY BRITTLE - USES ENCODED WHICH CHANGE - CHANGED BELOW
+    //filterDims['test'] = function(){ console.log(this['encoded']); } // yes this works - NB this references parent object but only if attached in this manner
+    console.log(JSON.stringify(filterDims));
+    console.log(filterDims);
+
+    console.log(filterDims['decode']('prt','c'));
+    console.log(filterDims['encode']('prt','BTL'));
+
     var dpdMap = encodeValueMap('dpd_band',{ "UTD":"UTD", "0-30":">0", "30-60":">30", "60-90":">30" });
     var dimsToAddToFilter = [
         { 'name' : 'dpd', 'derivedFrom' : 'dpd_band', 'grpFn' : grpCategories(dpdMap,">90") },
         { 'name' : 'forborne', 'derivedFrom' : 'fb', 'grpFn' : grpCategories(encodeValueMap('fb',{ "No":"N"}),"Y") },
         { 'name' : 'secured', 'derivedFrom' : 'ltv_band', 'grpFn' : grpCategories(encodeValueMap('ltv_band',{ "LTVexclusions":"N","NA":"N"}),"Y") },
+        { 'name' : 'arrs', 'derivedFrom' : 'dpd_band', 'grpFn' : grpCategories(encodeValueMap('dpd_band',{ "UTD":"N" }),"Y") },
     ];
-    dataDims = ['dpd','forborne','secured'].concat(dataDims);
+    dataDims = ['dpd','forborne','secured','arrs'].concat(dataDims);
     // console.log(dataDims);
+    /*dataDims.forEach(function(e,i,a){
+        console.log(i+": "+JSON.stringify(e));
+    });*/
+    // Create dims with display and values - helper to copy in to config - should make unnecessary through data configuration
+    /*var  dimsForConfig = Object.keys(dimsDisplay).reduce(function(r,e,i,a){
+        r[e] = { 'display' :  dimsDisplay[e], 'value' : dataDims.indexOf(e) };
+        return r;
+    },{});
+    console.log(JSON.stringify(dimsForConfig));*/
 
     // Helper functions to help with encoded/decoding
     function encodeValueMap(dim, valueMap){
@@ -223,9 +249,10 @@ function loadReport(){
         'periods' : numPeriods,
         'filtered' : true,
         'cubes' : [['prt','ent','sector','repay_type','int_rate_type']],
-        'measures' : ['count','bal','arrs','prv','ew_DiA','ew_iLTV','ew_int_rate','ew_rem_term','ew_TOB']
+        'measures' : dataNew['measures'], //['count','bal','arrs','prv','ew_DiA','ew_iLTV','ew_int_rate','ew_rem_term','ew_TOB']
+        'val' : ['bal','count','prv']
         });
-    //console.log(dbData);
+    // console.log(dbData);
     pxf = dProviderArray({ 'dims' : dataDims, 'src' : [{"id" : "_", "data" : dbData }], 'periods' : numPeriods});
 
     //*******************************************************************************
@@ -236,12 +263,13 @@ function loadReport(){
         'state' : state //should we hook up handlers directly
         ,'source' : dbData //not provider
         ,'container' : '#filterChart svg'
+        ,'containerCtrls' : '#filter'
         ,palette : colorbrewer['Blues'][9].reverse()
         ,'dims' : filterDims
-        , 'dimsEncoded' : dimsEncoded
+        //,'dimsEncoded' : dimsEncoded
     }
 
-    var mainFilter = dDimFilter(filterOptions);
+    var mainFilter = dDimFilterDropdown(filterOptions);
     //console.log(mainFilter);
 
     // Button Functionality for dDimFilter - to go into dDimFilter
@@ -306,7 +334,6 @@ function loadReport(){
     }
     var rptPage = stateElement(state, "rptPage", cssBtnSm,["Exposure","Stats", "KPI's"],["0", "1", "2"],[pageChange("pg")]);
 
-    //
     //*******************************************************************************
     //Step 4.2 - Initialise Dashboards
     //*******************************************************************************
@@ -335,6 +362,113 @@ function loadReport(){
     state.addView(rptLoanSize,4);
     state.addView(rptLTV,5);
     state.addView(rptGeo,6);
+
+    //*******************************************************************************
+    //Initialise KPI Dashboards
+    //*******************************************************************************
+    //KPI Helper functions
+    function growth(metric,interval){
+        return metric[def.c()]/metric[def.c()-interval]-1;
+    }
+    function prefix(text){
+        return function(value){
+            return text+value;
+        }
+    }
+    function suffix(text){
+        return function(value){
+            return value+text;
+        }
+    }
+    function splitFigure(value){
+        var i = 0, magnitudes = ['k','m','bn','%'];
+        do {
+            m = value.indexOf(magnitudes[i++]);
+        } while (m<0);
+        if(m<0) return value;
+        return value.substring(0,m).trim()+"<div class='suffix'>"+value.substring(m)+"</div>";
+    }
+    //KPI Templates
+    function kpiCells(title, kpiDefn){
+        return [
+            { type : 'cell', css : 'title', style :  '', value : function(){ return title; }, tooltip : 'Portfolio Selected' },
+        	{
+                type : 'cell',
+                css : 'kpi',
+                style :  '',
+                key : kpiDefn,
+                value : function(d){ var tgt = d['kpi']['value']; return tgt[def.c()]; },
+                valueApply : [rptFmt2,splitFigure],
+                tooltip : "Key Indicator",
+                eventHandlers : { 'click' : cellClicked }
+            },
+            { type : 'cell', css : 'stat', style :  '', value : function(d){ return (d['kpi']['value'][def.c()]/d['all']['value'][def.c()]); }, valueApply : [fp], tooltip : "% Total" },
+        	{ type : 'sparkbar', css : 'sparkline', style :  '', value : function(d){
+                return cellSeries(d['kpi']['value'].slice(0,def.c()+1)); }//return d['core'][0].slice(def.c,-13) }
+                , tooltip : "Trend" } ,
+            { type : 'cell', css : 'stat', style :  '', value : function(d){ return growth(d['kpi']['value'],1); }, valueApply : [rptFmt2,prefix("Qtr:")], tooltip : "Quarterly Growth" },
+            { type : 'cell', css : 'stat', style :  '', value : function(d){ return growth(d['kpi']['value'],4); }, valueApply : [rptFmt2,prefix("Yr:")], tooltip : "Annual Growth" },
+            { type : 'sparkline', css : 'sparkline', style :  '', value : function(d){
+                return cellSeries(d['kpi']['value'].slice(0,def.c()+1)); }//return d['core'][0].slice(def.c,-13) }
+                , tooltip : "Trend" } ,
+            {
+                type : 'stacked',
+                css : 'chart',
+                style :  '',
+                value : function(d){ return d['stack']['value'].map(function(e,i,a){ return { key : e['key'], values : e['values'].slice(def.s(),def.c()+1) }; }) },
+                object : 'chart',
+                tooltip : "Sub-analysis",
+                keysOrdered : true
+            }
+        ];
+    }
+    //KPI Templates
+    function kpiFactory(ref,name,container,kpiDefn,title){
+        var ret = {};
+        ret['ref'] = ref;
+        ret['name'] = name;
+        ret['container'] = container;
+        ret['source'] = pxf;
+        ret['dims'] = filterDims;
+        ret['palette'] = name;
+        ret['data'] = {
+            kpi : { key :kpiDefn },
+            all : { key : kpiDefnAll },
+            count : { key : extendNew(kpiDefn, { mre : 'count' }) },
+            stack : { key : function(d){ //console.log(d.groupBy([def.dimSelected()],def.u()));
+                    return sortDims(d.segmentSubAnalyse(kpiDefn,null,def.dimSelected()),dimsOrdered[def.dimSelected()]);
+                }
+            }
+        }
+        ret['cells'] = kpiCells(title,kpiDefn);
+        return ret;
+    }
+    //KPI Definitions
+    var kpiDefnAll = defaultDims(dataDims,state,{ mre : def.u});
+    var kpiStacks = [
+            { 'ref' : 0, 'name' : 'kpiAll', 'defn' : kpiDefnAll, 'title' : 'Portfolio'},
+            //{ 'ref' : 1, 'name' : 'kpiUTD', 'defn' : defaultDims(dataDims,state,{ mre : def.u, dpd : 'UTD'}), 'title' : 'UTD'},
+            { 'ref' : 5, 'name' : 'kpiPL', 'defn' : defaultDims(dataDims,state,{ mre : def.u, npl : 'a'}), 'title' : 'Performing'},
+            { 'ref' : 4, 'name' : 'kpiFB', 'defn' : defaultDims(dataDims,state,{ mre : def.u, forborne : 'Y'}), 'title' : 'Forborne'},
+            { 'ref' : 2, 'name' : 'kpiArr', 'defn' : defaultDims(dataDims,state,{ mre : def.u, arrs : 'Y'}), 'title' : 'Arrears'},
+            { 'ref' : 3, 'name' : 'kpi90plus', 'defn' : defaultDims(dataDims,state,{ mre : def.u, dpd : '>90'}), 'title' : '90 plus'},
+            { 'ref' : 6, 'name' : 'kpiNPL', 'defn' : defaultDims(dataDims,state,{ mre : def.u, npl : 'b'}), 'title' : 'NPL'},
+            { 'ref' : 7, 'name' : 'kpiImp', 'defn' : defaultDims(dataDims,state,{ mre : def.u, impaired : 'b'}), 'title' : 'Impaired'},
+            //{ 'ref' : 7, 'name' : 'kpiCls', 'defn' : kpiDefnAll, 'title' : 'Closures'}
+    ];
+
+    var kpi = d3.select("#kpiStack").selectAll('div').data(kpiStacks); //console.log(kpi);
+    var kpiEnter = kpi.enter().append('div')
+        .attr('id',function(d){ return d['name']; })
+        .attr('class','kpiStack'); //console.log(kpiEnter);
+
+    kpiStacks.forEach(function(e,i,a){
+        var opts = kpiFactory(e['ref'],e['name'],'#'+e['name'],e['defn'],e['title']);
+        var rpt = rpts[opts.name] = rpts[opts.ref] = dKPI( opts );
+        state.addView(rpt,0);
+        $(window).on('resize',rpt.update); // need this for switching window;
+    });
+
 
     //*******************************************************************************
     // Marimekko chart
@@ -383,7 +517,6 @@ function loadReport(){
         ,'container' : '#mekkoChart svg'
         //,palette : colorbrewer['Blues'][9].reverse()
         ,'dims' : filterDims
-        ,'dimsEncoded' : dimsEncoded
         ,'filter' : [mekkoH,mekkoV]
     }
 
